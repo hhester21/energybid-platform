@@ -1,0 +1,62 @@
+[images]
+  remote_images = ["https://source.unsplash.com/.*", "https://images.unsplash.com/.*", "https://ext.same-assets.com/.*", "https://ugc.same-assets.com/.*"]
+
+[build]
+  command = "bun run build"
+  publish = "out"
+
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  # Production API Configuration
+  NEXT_PUBLIC_PRODUCTION_MODE = "true"
+  NEXT_PUBLIC_API_TIMEOUT = "15000"
+  NEXT_PUBLIC_MAX_RETRIES = "3"
+
+  # Cache Configuration
+  NEXT_PUBLIC_CACHE_DURATION = "180000"
+  NEXT_PUBLIC_ENABLE_OFFLINE_MODE = "true"
+
+  # Refresh Intervals
+  NEXT_PUBLIC_GRID_DATA_REFRESH = "300000"
+  NEXT_PUBLIC_PRICE_DATA_REFRESH = "60000"
+  NEXT_PUBLIC_GENERATION_DATA_REFRESH = "120000"
+
+  # Rate Limiting
+  NEXT_PUBLIC_API_RATE_LIMIT = "200"
+  NEXT_PUBLIC_BURST_LIMIT = "50"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[context.production]
+  [context.production.environment]
+    # Production-specific API endpoints
+    NEXT_PUBLIC_CAISO_API_URL = "https://oasis.caiso.com/oasisapi/SingleZip"
+    NEXT_PUBLIC_ERCOT_API_URL = "https://www.ercot.com/api/1/services/read"
+
+[context.deploy-preview]
+  [context.deploy-preview.environment]
+    # Preview deployments use demo data
+    NEXT_PUBLIC_PRODUCTION_MODE = "false"
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "public, max-age=3600"
+
+# API headers for real-time data
+[[headers]]
+  for = "/api/*"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+# Redirects for single-page app
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
