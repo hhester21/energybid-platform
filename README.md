@@ -101,7 +101,7 @@ Detailed energy consumption, cost savings, and environmental impact tracking.
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/energybid-platform.git
+git clone https://github.com/hhester21/energybid-platform.git
 cd energybid-platform
 
 # Install dependencies
@@ -337,8 +337,8 @@ Built with ❤️ by the EnergyBid team
 ## 📞 **Contact & Support**
 
 - **Documentation**: [Technical Docs](.same/)
-- **Issues**: [GitHub Issues](https://github.com/your-username/energybid-platform/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/your-username/energybid-platform/discussions)
+- **Issues**: [GitHub Issues](https://github.com/hhester21/energybid-platform/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/hhester21/energybid-platform/discussions)
 
 ---
 
