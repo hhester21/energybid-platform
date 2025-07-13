@@ -152,7 +152,7 @@ class BlockchainConnector {
       events.push({
         id: `event_${Date.now()}_${i}`,
         contractId: address,
-        eventType: eventTypes[i % eventTypes.length] as any,
+        eventType: eventTypes[i % eventTypes.length] as string,
         timestamp: new Date(Date.now() - i * 60 * 60 * 1000),
         blockNumber: 12345678 + i,
         transactionHash: `0x${Math.random().toString(16).substr(2, 64)}`,
