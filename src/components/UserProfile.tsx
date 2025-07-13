@@ -3,8 +3,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +37,7 @@ import {
   LogOut,
   Building,
   Zap,
-  Award
+  Award,
 } from "lucide-react";
 import { AccountSettings } from "@/components/AccountSettings";
 import { NotificationCenter } from "@/components/NotificationCenter";
@@ -45,7 +58,7 @@ interface UserProfileProps {
 export function UserProfile({ user }: UserProfileProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDialog, setActiveDialog] = useState<string | null>(null);
-  const { logout } = useAuth();
+  const { signOut } = useAuth();
 
   const getTierColor = (tier: string) => {
     switch (tier) {
@@ -83,7 +96,7 @@ export function UserProfile({ user }: UserProfileProps) {
         setActiveDialog("help");
         break;
       case "logout":
-        logout();
+        signOut();
         break;
     }
   };
@@ -96,7 +109,11 @@ export function UserProfile({ user }: UserProfileProps) {
             <Avatar className="h-10 w-10">
               <AvatarImage src={user.avatar} alt={user.name} />
               <AvatarFallback className="bg-gradient-to-br from-green-500 to-blue-500 text-white">
-                {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                {user.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")
+                  .toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </Button>
@@ -108,19 +125,31 @@ export function UserProfile({ user }: UserProfileProps) {
                 <Avatar className="h-12 w-12">
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback className="bg-gradient-to-br from-green-500 to-blue-500 text-white">
-                    {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    {user.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <p className="text-sm font-medium leading-none">{user.name}</p>
+                  <p className="text-sm font-medium leading-none">
+                    {user.name}
+                  </p>
                   <p className="text-xs leading-none text-muted-foreground mt-1">
                     {user.email}
                   </p>
                   <div className="flex items-center space-x-2 mt-2">
-                    <Badge className={getTierColor(user.tier)} variant="secondary">
+                    <Badge
+                      className={getTierColor(user.tier)}
+                      variant="secondary"
+                    >
                       {user.tier}
                     </Badge>
-                    <Badge variant="outline" className="text-blue-600 border-blue-300">
+                    <Badge
+                      variant="outline"
+                      className="text-blue-600 border-blue-300"
+                    >
                       <Building className="h-3 w-3 mr-1" />
                       {user.company}
                     </Badge>
@@ -148,34 +177,52 @@ export function UserProfile({ user }: UserProfileProps) {
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuItemClick("profile")}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => handleMenuItemClick("profile")}
+          >
             <User className="mr-2 h-4 w-4" />
             <span>Profile Settings</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuItemClick("notifications")}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => handleMenuItemClick("notifications")}
+          >
             <Bell className="mr-2 h-4 w-4" />
             <span>Notifications</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuItemClick("billing")}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => handleMenuItemClick("billing")}
+          >
             <CreditCard className="mr-2 h-4 w-4" />
             <span>Billing</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuItemClick("settings")}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => handleMenuItemClick("settings")}
+          >
             <Settings className="mr-2 h-4 w-4" />
             <span>Account Settings</span>
           </DropdownMenuItem>
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuItemClick("security")}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => handleMenuItemClick("security")}
+          >
             <Shield className="mr-2 h-4 w-4" />
             <span>Security</span>
           </DropdownMenuItem>
 
-          <DropdownMenuItem className="cursor-pointer" onClick={() => handleMenuItemClick("help")}>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => handleMenuItemClick("help")}
+          >
             <HelpCircle className="mr-2 h-4 w-4" />
             <span>Help & Support</span>
           </DropdownMenuItem>
@@ -193,7 +240,10 @@ export function UserProfile({ user }: UserProfileProps) {
       </DropdownMenu>
 
       {/* Profile Settings Dialog */}
-      <Dialog open={activeDialog === "profile"} onOpenChange={(open) => !open && setActiveDialog(null)}>
+      <Dialog
+        open={activeDialog === "profile"}
+        onOpenChange={(open) => !open && setActiveDialog(null)}
+      >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Profile Settings</DialogTitle>
@@ -206,7 +256,11 @@ export function UserProfile({ user }: UserProfileProps) {
               <Avatar className="h-20 w-20">
                 <AvatarImage src={user.avatar} alt={user.name} />
                 <AvatarFallback className="bg-gradient-to-br from-green-500 to-blue-500 text-white text-xl">
-                  {user.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  {user.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")
+                    .toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <div>
@@ -228,18 +282,29 @@ export function UserProfile({ user }: UserProfileProps) {
             </div>
 
             <div className="flex justify-end space-x-2">
-              <Button variant="outline" onClick={() => setActiveDialog(null)}>Close</Button>
-              <Button onClick={() => {
-                alert("👤 Edit Profile\n\nProfile editing functionality would include:\n• Update name and email\n• Change company information\n• Upload profile picture\n• Update preferences\n• Modify notification settings\n\nThis would open a comprehensive profile editor in a production environment.");
-                setActiveDialog(null);
-              }}>Edit Profile</Button>
+              <Button variant="outline" onClick={() => setActiveDialog(null)}>
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  alert(
+                    "👤 Edit Profile\n\nProfile editing functionality would include:\n• Update name and email\n• Change company information\n• Upload profile picture\n• Update preferences\n• Modify notification settings\n\nThis would open a comprehensive profile editor in a production environment.",
+                  );
+                  setActiveDialog(null);
+                }}
+              >
+                Edit Profile
+              </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Notifications Dialog */}
-      <Dialog open={activeDialog === "notifications"} onOpenChange={(open) => !open && setActiveDialog(null)}>
+      <Dialog
+        open={activeDialog === "notifications"}
+        onOpenChange={(open) => !open && setActiveDialog(null)}
+      >
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Notification Center</DialogTitle>
@@ -252,7 +317,10 @@ export function UserProfile({ user }: UserProfileProps) {
       </Dialog>
 
       {/* Billing Dialog */}
-      <Dialog open={activeDialog === "billing"} onOpenChange={(open) => !open && setActiveDialog(null)}>
+      <Dialog
+        open={activeDialog === "billing"}
+        onOpenChange={(open) => !open && setActiveDialog(null)}
+      >
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Billing Management</DialogTitle>
@@ -265,7 +333,10 @@ export function UserProfile({ user }: UserProfileProps) {
       </Dialog>
 
       {/* Account Settings Dialog */}
-      <Dialog open={activeDialog === "settings"} onOpenChange={(open) => !open && setActiveDialog(null)}>
+      <Dialog
+        open={activeDialog === "settings"}
+        onOpenChange={(open) => !open && setActiveDialog(null)}
+      >
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
             <DialogTitle>Account Settings</DialogTitle>
@@ -278,12 +349,16 @@ export function UserProfile({ user }: UserProfileProps) {
       </Dialog>
 
       {/* Security Dialog */}
-      <Dialog open={activeDialog === "security"} onOpenChange={(open) => !open && setActiveDialog(null)}>
+      <Dialog
+        open={activeDialog === "security"}
+        onOpenChange={(open) => !open && setActiveDialog(null)}
+      >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Security Settings</DialogTitle>
             <DialogDescription>
-              Manage your password, two-factor authentication, and security preferences.
+              Manage your password, two-factor authentication, and security
+              preferences.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -296,7 +371,9 @@ export function UserProfile({ user }: UserProfileProps) {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    alert("🔐 Change Password\n\nPassword change would include:\n• Current password verification\n• New password requirements\n• Password strength indicator\n• Confirmation step\n• Email notification\n\nThis would open a secure password change form in production.");
+                    alert(
+                      "🔐 Change Password\n\nPassword change would include:\n• Current password verification\n• New password requirements\n• Password strength indicator\n• Confirmation step\n• Email notification\n\nThis would open a secure password change form in production.",
+                    );
                   }}
                 >
                   Change Password
@@ -306,8 +383,12 @@ export function UserProfile({ user }: UserProfileProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Two-Factor Authentication</CardTitle>
-                <CardDescription>Add an extra layer of security</CardDescription>
+                <CardTitle className="text-lg">
+                  Two-Factor Authentication
+                </CardTitle>
+                <CardDescription>
+                  Add an extra layer of security
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex items-center justify-between">
@@ -315,7 +396,9 @@ export function UserProfile({ user }: UserProfileProps) {
                   <Button
                     variant="outline"
                     onClick={() => {
-                      alert("🔒 Two-Factor Authentication\n\n2FA setup would include:\n• QR code for authenticator app\n• Backup codes generation\n• Phone number verification\n• Test authentication\n• Recovery options\n\nThis would guide you through secure 2FA setup in production.");
+                      alert(
+                        "🔒 Two-Factor Authentication\n\n2FA setup would include:\n• QR code for authenticator app\n• Backup codes generation\n• Phone number verification\n• Test authentication\n• Recovery options\n\nThis would guide you through secure 2FA setup in production.",
+                      );
                     }}
                   >
                     Enable 2FA
@@ -344,14 +427,19 @@ export function UserProfile({ user }: UserProfileProps) {
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" onClick={() => setActiveDialog(null)}>Close</Button>
+              <Button variant="outline" onClick={() => setActiveDialog(null)}>
+                Close
+              </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
 
       {/* Help & Support Dialog */}
-      <Dialog open={activeDialog === "help"} onOpenChange={(open) => !open && setActiveDialog(null)}>
+      <Dialog
+        open={activeDialog === "help"}
+        onOpenChange={(open) => !open && setActiveDialog(null)}
+      >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Help & Support</DialogTitle>
@@ -360,7 +448,10 @@ export function UserProfile({ user }: UserProfileProps) {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <Card className="cursor-pointer hover:bg-gray-50" onClick={() => window.open('/docs', '_blank')}>
+            <Card
+              className="cursor-pointer hover:bg-gray-50"
+              onClick={() => window.open("/docs", "_blank")}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
                   <div className="bg-blue-100 p-2 rounded">
@@ -368,13 +459,18 @@ export function UserProfile({ user }: UserProfileProps) {
                   </div>
                   <div>
                     <h3 className="font-medium">Documentation</h3>
-                    <p className="text-sm text-gray-500">Learn how to use EnergyBid</p>
+                    <p className="text-sm text-gray-500">
+                      Learn how to use EnergyBid
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="cursor-pointer hover:bg-gray-50" onClick={() => window.open('mailto:support@energybid.com')}>
+            <Card
+              className="cursor-pointer hover:bg-gray-50"
+              onClick={() => window.open("mailto:support@energybid.com")}
+            >
               <CardContent className="p-4">
                 <div className="flex items-center space-x-3">
                   <div className="bg-green-100 p-2 rounded">
@@ -382,7 +478,9 @@ export function UserProfile({ user }: UserProfileProps) {
                   </div>
                   <div>
                     <h3 className="font-medium">Contact Support</h3>
-                    <p className="text-sm text-gray-500">Get help from our team</p>
+                    <p className="text-sm text-gray-500">
+                      Get help from our team
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -396,14 +494,18 @@ export function UserProfile({ user }: UserProfileProps) {
                   </div>
                   <div>
                     <h3 className="font-medium">System Status</h3>
-                    <p className="text-sm text-gray-500">Check platform health</p>
+                    <p className="text-sm text-gray-500">
+                      Check platform health
+                    </p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
             <div className="flex justify-end">
-              <Button variant="outline" onClick={() => setActiveDialog(null)}>Close</Button>
+              <Button variant="outline" onClick={() => setActiveDialog(null)}>
+                Close
+              </Button>
             </div>
           </div>
         </DialogContent>

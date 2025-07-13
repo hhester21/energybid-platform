@@ -1,10 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, CheckCircle, Clock, RefreshCw, Activity } from "lucide-react";
+import {
+  AlertTriangle,
+  CheckCircle,
+  Clock,
+  RefreshCw,
+  Activity,
+} from "lucide-react";
 import { productionGridAPI } from "@/lib/grid-apis";
 
 interface APIStatus {
@@ -20,7 +26,7 @@ export function APIHealthMonitor() {
   const [isChecking, setIsChecking] = useState(false);
   const [lastCheck, setLastCheck] = useState<Date | null>(null);
 
-  const checkAPIHealth = async () => {
+  const checkAPIHealth = useCallback(async () => {
     setIsChecking(true);
     try {
       const healthData = await productionGridAPI.getAPIHealthStatus();
@@ -34,43 +40,51 @@ export function APIHealthMonitor() {
           status: "down",
           responseTime: 0,
           lastUpdated: new Date(),
-          error: "Health check failed"
+          error: "Health check failed",
         },
         {
           name: "ERCOT",
           status: "down",
           responseTime: 0,
           lastUpdated: new Date(),
-          error: "Health check failed"
-        }
+          error: "Health check failed",
+        },
       ]);
     } finally {
       setIsChecking(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkAPIHealth();
     // Check every 5 minutes
     const interval = setInterval(checkAPIHealth, 5 * 60 * 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [checkAPIHealth]);
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "operational": return "bg-green-100 text-green-800";
-      case "degraded": return "bg-yellow-100 text-yellow-800";
-      case "down": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "operational":
+        return "bg-green-100 text-green-800";
+      case "degraded":
+        return "bg-yellow-100 text-yellow-800";
+      case "down":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "operational": return <CheckCircle className="h-4 w-4 text-green-600" />;
-      case "degraded": return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
-      case "down": return <AlertTriangle className="h-4 w-4 text-red-600" />;
-      default: return <Clock className="h-4 w-4 text-gray-600" />;
+      case "operational":
+        return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case "degraded":
+        return <AlertTriangle className="h-4 w-4 text-yellow-600" />;
+      case "down":
+        return <AlertTriangle className="h-4 w-4 text-red-600" />;
+      default:
+        return <Clock className="h-4 w-4 text-gray-600" />;
     }
   };
 
@@ -83,7 +97,9 @@ export function APIHealthMonitor() {
         <CardContent className="p-4">
           <div className="flex items-center space-x-2">
             <Activity className="h-4 w-4 text-blue-600" />
-            <span className="text-sm text-blue-800">Development Mode - Using Demo Data</span>
+            <span className="text-sm text-blue-800">
+              Development Mode - Using Demo Data
+            </span>
           </div>
         </CardContent>
       </Card>
@@ -111,7 +127,9 @@ export function APIHealthMonitor() {
               onClick={checkAPIHealth}
               disabled={isChecking}
             >
-              <RefreshCw className={`h-4 w-4 ${isChecking ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${isChecking ? "animate-spin" : ""}`}
+              />
             </Button>
           </div>
         </div>
@@ -119,7 +137,10 @@ export function APIHealthMonitor() {
       <CardContent>
         <div className="space-y-4">
           {apiStatuses.map((api) => (
-            <div key={api.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div
+              key={api.name}
+              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            >
               <div className="flex items-center space-x-3">
                 {getStatusIcon(api.status)}
                 <div>
@@ -162,16 +183,16 @@ export function APIHealthMonitor() {
               <div>
                 <h4 className="font-medium text-gray-800">System Status</h4>
                 <p className="text-sm text-gray-600">
-                  {apiStatuses.every(api => api.status === "operational")
+                  {apiStatuses.every((api) => api.status === "operational")
                     ? "All systems operational"
-                    : apiStatuses.some(api => api.status === "operational")
-                    ? "Partial system degradation"
-                    : "System experiencing issues"}
+                    : apiStatuses.some((api) => api.status === "operational")
+                      ? "Partial system degradation"
+                      : "System experiencing issues"}
                 </p>
               </div>
 
               <div className="flex items-center space-x-1">
-                {apiStatuses.every(api => api.status === "operational") ? (
+                {apiStatuses.every((api) => api.status === "operational") ? (
                   <CheckCircle className="h-6 w-6 text-green-600" />
                 ) : (
                   <AlertTriangle className="h-6 w-6 text-yellow-600" />
@@ -184,11 +205,14 @@ export function APIHealthMonitor() {
           <div className="text-xs text-gray-500 bg-gray-100 p-2 rounded">
             <strong>Data Sources:</strong>
             <br />
-            • CAISO: California Independent System Operator - Real-time pricing and generation data
+            • CAISO: California Independent System Operator - Real-time pricing
+            and generation data
             <br />
-            • ERCOT: Electric Reliability Council of Texas - Load forecasts and wind generation data
+            • ERCOT: Electric Reliability Council of Texas - Load forecasts and
+            wind generation data
             <br />
-            <strong>Update Frequency:</strong> Real-time data refreshes every 1-5 minutes
+            <strong>Update Frequency:</strong> Real-time data refreshes every
+            1-5 minutes
           </div>
         </div>
       </CardContent>

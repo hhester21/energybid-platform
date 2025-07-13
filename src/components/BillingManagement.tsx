@@ -1,15 +1,34 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   CreditCard,
   DollarSign,
@@ -24,12 +43,13 @@ import {
   Check,
   AlertTriangle,
   Plus,
+  X,
   Edit,
   Trash2,
   Crown,
   Star,
   Building,
-  Globe
+  Globe,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 
@@ -108,15 +128,15 @@ const subscriptionPlans: SubscriptionPlan[] = [
       { name: "Advanced AI Insights", included: false },
       { name: "API Access", included: false },
       { name: "Smart Contracts", included: false },
-      { name: "Priority Support", included: false }
+      { name: "Priority Support", included: false },
     ],
     limits: {
       trades: 100,
       apiCalls: 1000,
       storage: 1,
-      users: 1
+      users: 1,
     },
-    userTypes: ["consumer", "producer"]
+    userTypes: ["consumer", "producer"],
   },
   {
     id: "professional",
@@ -132,15 +152,15 @@ const subscriptionPlans: SubscriptionPlan[] = [
       { name: "Auto-bidding Engine", included: true },
       { name: "Priority Support", included: true },
       { name: "Custom Integrations", included: false },
-      { name: "Dedicated Account Manager", included: false }
+      { name: "Dedicated Account Manager", included: false },
     ],
     limits: {
       trades: 1000,
       apiCalls: 10000,
       storage: 10,
-      users: 5
+      users: 5,
     },
-    userTypes: ["consumer", "producer"]
+    userTypes: ["consumer", "producer"],
   },
   {
     id: "enterprise",
@@ -155,15 +175,15 @@ const subscriptionPlans: SubscriptionPlan[] = [
       { name: "24/7 Phone Support", included: true },
       { name: "SLA Guarantee", included: true, value: "99.9% uptime" },
       { name: "Custom Reporting", included: true },
-      { name: "White-label Options", included: true }
+      { name: "White-label Options", included: true },
     ],
     limits: {
       trades: "unlimited",
       apiCalls: 100000,
       storage: 100,
-      users: "unlimited"
+      users: "unlimited",
     },
-    userTypes: ["consumer", "producer", "enterprise"]
+    userTypes: ["consumer", "producer", "enterprise"],
   },
   {
     id: "grid_operator",
@@ -178,22 +198,24 @@ const subscriptionPlans: SubscriptionPlan[] = [
       { name: "Emergency Response", included: true },
       { name: "Compliance Dashboard", included: true },
       { name: "Priority Infrastructure", included: true },
-      { name: "Custom Development", included: true }
+      { name: "Custom Development", included: true },
     ],
     limits: {
       trades: "unlimited",
       apiCalls: "unlimited",
       storage: "unlimited",
-      users: "unlimited"
+      users: "unlimited",
     },
-    userTypes: ["grid_operator"]
-  }
+    userTypes: ["grid_operator"],
+  },
 ];
 
 export function BillingManagement() {
   const { user } = useAuth();
   const [currentPlan, setCurrentPlan] = useState("professional");
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">("monthly");
+  const [billingCycle, setBillingCycle] = useState<"monthly" | "annual">(
+    "monthly",
+  );
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [usageData, setUsageData] = useState<UsageData[]>([]);
@@ -215,15 +237,15 @@ export function BillingManagement() {
         last4: "4567",
         expiryDate: "12/26",
         isDefault: true,
-        brand: "visa"
+        brand: "visa",
       },
       {
         id: "pm2",
         type: "bank_account",
         name: "Business Checking",
         last4: "7890",
-        isDefault: false
-      }
+        isDefault: false,
+      },
     ]);
 
     // Sample invoices
@@ -235,17 +257,17 @@ export function BillingManagement() {
         status: "pending",
         period: {
           start: new Date(2024, 11, 1),
-          end: new Date(2024, 11, 31)
+          end: new Date(2024, 11, 31),
         },
         items: [
           {
             description: "Professional Plan - December 2024",
             quantity: 1,
             unitPrice: 299,
-            total: 299
-          }
+            total: 299,
+          },
         ],
-        downloadUrl: "#"
+        downloadUrl: "#",
       },
       {
         id: "INV-2024-002",
@@ -254,17 +276,17 @@ export function BillingManagement() {
         status: "paid",
         period: {
           start: new Date(2024, 10, 1),
-          end: new Date(2024, 10, 30)
+          end: new Date(2024, 10, 30),
         },
         items: [
           {
             description: "Professional Plan - November 2024",
             quantity: 1,
             unitPrice: 299,
-            total: 299
-          }
+            total: 299,
+          },
         ],
-        downloadUrl: "#"
+        downloadUrl: "#",
       },
       {
         id: "INV-2024-001",
@@ -273,33 +295,69 @@ export function BillingManagement() {
         status: "paid",
         period: {
           start: new Date(2024, 9, 1),
-          end: new Date(2024, 9, 31)
+          end: new Date(2024, 9, 31),
         },
         items: [
           {
             description: "Professional Plan - October 2024",
             quantity: 1,
             unitPrice: 299,
-            total: 299
-          }
+            total: 299,
+          },
         ],
-        downloadUrl: "#"
-      }
+        downloadUrl: "#",
+      },
     ]);
 
     // Sample usage data
     setUsageData([
-      { period: "Dec 2024", trades: 156, apiCalls: 8420, storage: 2.4, cost: 299 },
-      { period: "Nov 2024", trades: 142, apiCalls: 7650, storage: 2.1, cost: 299 },
-      { period: "Oct 2024", trades: 178, apiCalls: 9230, storage: 2.8, cost: 299 },
-      { period: "Sep 2024", trades: 134, apiCalls: 6890, storage: 1.9, cost: 299 },
-      { period: "Aug 2024", trades: 201, apiCalls: 10450, storage: 3.2, cost: 299 },
-      { period: "Jul 2024", trades: 189, apiCalls: 9870, storage: 2.9, cost: 299 }
+      {
+        period: "Dec 2024",
+        trades: 156,
+        apiCalls: 8420,
+        storage: 2.4,
+        cost: 299,
+      },
+      {
+        period: "Nov 2024",
+        trades: 142,
+        apiCalls: 7650,
+        storage: 2.1,
+        cost: 299,
+      },
+      {
+        period: "Oct 2024",
+        trades: 178,
+        apiCalls: 9230,
+        storage: 2.8,
+        cost: 299,
+      },
+      {
+        period: "Sep 2024",
+        trades: 134,
+        apiCalls: 6890,
+        storage: 1.9,
+        cost: 299,
+      },
+      {
+        period: "Aug 2024",
+        trades: 201,
+        apiCalls: 10450,
+        storage: 3.2,
+        cost: 299,
+      },
+      {
+        period: "Jul 2024",
+        trades: 189,
+        apiCalls: 9870,
+        storage: 2.9,
+        cost: 299,
+      },
     ]);
   };
 
   const getCurrentPlan = () => {
-    return subscriptionPlans.find(plan => plan.id === currentPlan);
+    return subscriptionPlans.find((plan) => plan.id === currentPlan);
   };
 
   const handleUpgradePlan = (planId: string) => {
@@ -323,23 +381,25 @@ export function BillingManagement() {
       last4: "1234",
       expiryDate: "08/28",
       isDefault: false,
-      brand: "mastercard"
+      brand: "mastercard",
     };
-    setPaymentMethods(prev => [...prev, newPaymentMethod]);
+    setPaymentMethods((prev) => [...prev, newPaymentMethod]);
     setShowAddPaymentDialog(false);
   };
 
   const setDefaultPaymentMethod = (methodId: string) => {
-    setPaymentMethods(prev =>
-      prev.map(method => ({
+    setPaymentMethods((prev) =>
+      prev.map((method) => ({
         ...method,
-        isDefault: method.id === methodId
-      }))
+        isDefault: method.id === methodId,
+      })),
     );
   };
 
   const deletePaymentMethod = (methodId: string) => {
-    setPaymentMethods(prev => prev.filter(method => method.id !== methodId));
+    setPaymentMethods((prev) =>
+      prev.filter((method) => method.id !== methodId),
+    );
   };
 
   const currentPlanData = getCurrentPlan();
@@ -351,7 +411,9 @@ export function BillingManagement() {
         <CardContent className="p-8 text-center">
           <CreditCard className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Billing Management</h3>
-          <p className="text-gray-500">Sign in to manage your subscription and billing.</p>
+          <p className="text-gray-500">
+            Sign in to manage your subscription and billing.
+          </p>
         </CardContent>
       </Card>
     );
@@ -366,7 +428,9 @@ export function BillingManagement() {
             <CreditCard className="h-6 w-6 text-green-600" />
             <span>Billing Management</span>
           </h2>
-          <p className="text-gray-600">Manage your subscription, usage, and payment methods</p>
+          <p className="text-gray-600">
+            Manage your subscription, usage, and payment methods
+          </p>
         </div>
         <div className="flex items-center space-x-2">
           <Badge variant="outline" className="text-blue-600 border-blue-300">
@@ -416,7 +480,10 @@ export function BillingManagement() {
               </h3>
               <p className="text-gray-600">{currentPlanData?.name} Plan</p>
               <p className="text-sm text-gray-500 mt-1">
-                Next billing: {new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toLocaleDateString()}
+                Next billing:{" "}
+                {new Date(
+                  Date.now() + 15 * 24 * 60 * 60 * 1000,
+                ).toLocaleDateString()}
               </p>
             </div>
 
@@ -425,12 +492,17 @@ export function BillingManagement() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>Trades Used</span>
-                    <span>{currentUsage.trades} / {currentPlanData?.limits.trades}</span>
+                    <span>
+                      {currentUsage.trades} / {currentPlanData?.limits.trades}
+                    </span>
                   </div>
                   <Progress
-                    value={typeof currentPlanData?.limits.trades === 'number'
-                      ? (currentUsage.trades / currentPlanData.limits.trades) * 100
-                      : 50
+                    value={
+                      typeof currentPlanData?.limits.trades === "number"
+                        ? (currentUsage.trades /
+                            currentPlanData.limits.trades) *
+                          100
+                        : 50
                     }
                     className="h-2"
                   />
@@ -438,12 +510,18 @@ export function BillingManagement() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>API Calls</span>
-                    <span>{currentUsage.apiCalls.toLocaleString()} / {currentPlanData?.limits.apiCalls.toLocaleString()}</span>
+                    <span>
+                      {currentUsage.apiCalls.toLocaleString()} /{" "}
+                      {currentPlanData?.limits.apiCalls.toLocaleString()}
+                    </span>
                   </div>
                   <Progress
-                    value={typeof currentPlanData?.limits.apiCalls === 'number'
-                      ? (currentUsage.apiCalls / currentPlanData.limits.apiCalls) * 100
-                      : 50
+                    value={
+                      typeof currentPlanData?.limits.apiCalls === "number"
+                        ? (currentUsage.apiCalls /
+                            currentPlanData.limits.apiCalls) *
+                          100
+                        : 50
                     }
                     className="h-2"
                   />
@@ -451,12 +529,18 @@ export function BillingManagement() {
                 <div>
                   <div className="flex justify-between text-sm mb-2">
                     <span>Storage</span>
-                    <span>{currentUsage.storage}GB / {currentPlanData?.limits.storage}GB</span>
+                    <span>
+                      {currentUsage.storage}GB /{" "}
+                      {currentPlanData?.limits.storage}GB
+                    </span>
                   </div>
                   <Progress
-                    value={typeof currentPlanData?.limits.storage === 'number'
-                      ? (currentUsage.storage / currentPlanData.limits.storage) * 100
-                      : 50
+                    value={
+                      typeof currentPlanData?.limits.storage === "number"
+                        ? (currentUsage.storage /
+                            currentPlanData.limits.storage) *
+                          100
+                        : 50
                     }
                     className="h-2"
                   />
@@ -483,7 +567,9 @@ export function BillingManagement() {
               <Card className="bg-white/60 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle>Usage History</CardTitle>
-                  <CardDescription>Track your platform usage over time</CardDescription>
+                  <CardDescription>
+                    Track your platform usage over time
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -500,7 +586,9 @@ export function BillingManagement() {
                           </div>
                           <div>
                             <p className="text-gray-500">API Calls</p>
-                            <p className="font-semibold">{data.apiCalls.toLocaleString()}</p>
+                            <p className="font-semibold">
+                              {data.apiCalls.toLocaleString()}
+                            </p>
                           </div>
                           <div>
                             <p className="text-gray-500">Storage</p>
@@ -526,28 +614,42 @@ export function BillingManagement() {
                         <Zap className="h-4 w-4 text-blue-600" />
                         <span className="text-sm">Total Trades</span>
                       </div>
-                      <span className="font-semibold">{usageData.reduce((sum, d) => sum + d.trades, 0)}</span>
+                      <span className="font-semibold">
+                        {usageData.reduce((sum, d) => sum + d.trades, 0)}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <Globe className="h-4 w-4 text-green-600" />
                         <span className="text-sm">API Calls</span>
                       </div>
-                      <span className="font-semibold">{usageData.reduce((sum, d) => sum + d.apiCalls, 0).toLocaleString()}</span>
+                      <span className="font-semibold">
+                        {usageData
+                          .reduce((sum, d) => sum + d.apiCalls, 0)
+                          .toLocaleString()}
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <Database className="h-4 w-4 text-purple-600" />
                         <span className="text-sm">Avg Storage</span>
                       </div>
-                      <span className="font-semibold">{(usageData.reduce((sum, d) => sum + d.storage, 0) / usageData.length).toFixed(1)}GB</span>
+                      <span className="font-semibold">
+                        {(
+                          usageData.reduce((sum, d) => sum + d.storage, 0) /
+                          usageData.length
+                        ).toFixed(1)}
+                        GB
+                      </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center space-x-2">
                         <DollarSign className="h-4 w-4 text-orange-600" />
                         <span className="text-sm">Total Cost</span>
                       </div>
-                      <span className="font-semibold">${usageData.reduce((sum, d) => sum + d.cost, 0)}</span>
+                      <span className="font-semibold">
+                        ${usageData.reduce((sum, d) => sum + d.cost, 0)}
+                      </span>
                     </div>
                   </div>
                 </CardContent>
@@ -563,8 +665,12 @@ export function BillingManagement() {
                       <div className="flex items-start space-x-2">
                         <Check className="h-4 w-4 text-green-600 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium text-green-800">Efficient Usage</p>
-                          <p className="text-xs text-green-600">You're using 78% of your plan limits efficiently</p>
+                          <p className="text-sm font-medium text-green-800">
+                            Efficient Usage
+                          </p>
+                          <p className="text-xs text-green-600">
+                            You're using 78% of your plan limits efficiently
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -572,8 +678,13 @@ export function BillingManagement() {
                       <div className="flex items-start space-x-2">
                         <TrendingUp className="h-4 w-4 text-blue-600 mt-0.5" />
                         <div>
-                          <p className="text-sm font-medium text-blue-800">Upgrade Recommendation</p>
-                          <p className="text-xs text-blue-600">Consider Enterprise for better value at your usage level</p>
+                          <p className="text-sm font-medium text-blue-800">
+                            Upgrade Recommendation
+                          </p>
+                          <p className="text-xs text-blue-600">
+                            Consider Enterprise for better value at your usage
+                            level
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -591,24 +702,32 @@ export function BillingManagement() {
               <Card
                 key={plan.id}
                 className={`bg-white/60 backdrop-blur-sm relative ${
-                  plan.popular ? 'ring-2 ring-blue-500 border-blue-300' : ''
-                } ${plan.id === currentPlan ? 'bg-blue-50 border-blue-300' : ''}`}
+                  plan.popular ? "ring-2 ring-blue-500 border-blue-300" : ""
+                } ${plan.id === currentPlan ? "bg-blue-50 border-blue-300" : ""}`}
               >
                 {plan.popular && (
                   <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-blue-500 text-white">Most Popular</Badge>
+                    <Badge className="bg-blue-500 text-white">
+                      Most Popular
+                    </Badge>
                   </div>
                 )}
                 {plan.id === currentPlan && (
                   <div className="absolute -top-3 right-4">
-                    <Badge className="bg-green-500 text-white">Current Plan</Badge>
+                    <Badge className="bg-green-500 text-white">
+                      Current Plan
+                    </Badge>
                   </div>
                 )}
 
                 <CardHeader>
                   <CardTitle className="flex items-center space-x-2">
-                    {plan.id === "enterprise" && <Crown className="h-5 w-5 text-yellow-500" />}
-                    {plan.id === "grid_operator" && <Building className="h-5 w-5 text-purple-500" />}
+                    {plan.id === "enterprise" && (
+                      <Crown className="h-5 w-5 text-yellow-500" />
+                    )}
+                    {plan.id === "grid_operator" && (
+                      <Building className="h-5 w-5 text-purple-500" />
+                    )}
                     <span>{plan.name}</span>
                   </CardTitle>
                   <CardDescription>{plan.description}</CardDescription>
@@ -620,7 +739,8 @@ export function BillingManagement() {
                   </div>
                   {billingCycle === "annual" && (
                     <p className="text-sm text-green-600">
-                      Save ${plan.price.monthly * 12 - plan.price.annual} per year
+                      Save ${plan.price.monthly * 12 - plan.price.annual} per
+                      year
                     </p>
                   )}
                 </CardHeader>
@@ -635,11 +755,19 @@ export function BillingManagement() {
                           <X className="h-4 w-4 text-gray-300 mt-0.5 flex-shrink-0" />
                         )}
                         <div className="flex-1">
-                          <span className={feature.included ? "text-gray-900" : "text-gray-400"}>
+                          <span
+                            className={
+                              feature.included
+                                ? "text-gray-900"
+                                : "text-gray-400"
+                            }
+                          >
                             {feature.name}
                           </span>
                           {feature.value && (
-                            <span className="text-sm text-gray-500 block">{feature.value}</span>
+                            <span className="text-sm text-gray-500 block">
+                              {feature.value}
+                            </span>
                           )}
                         </div>
                       </div>
@@ -650,19 +778,25 @@ export function BillingManagement() {
                     <div className="flex justify-between">
                       <span>Trades:</span>
                       <span className="font-medium">
-                        {plan.limits.trades === "unlimited" ? "Unlimited" : plan.limits.trades.toLocaleString()}
+                        {plan.limits.trades === "unlimited"
+                          ? "Unlimited"
+                          : plan.limits.trades.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>API Calls:</span>
                       <span className="font-medium">
-                        {plan.limits.apiCalls === "unlimited" ? "Unlimited" : plan.limits.apiCalls.toLocaleString()}
+                        {plan.limits.apiCalls === "unlimited"
+                          ? "Unlimited"
+                          : plan.limits.apiCalls.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Storage:</span>
                       <span className="font-medium">
-                        {plan.limits.storage === "unlimited" ? "Unlimited" : `${plan.limits.storage}GB`}
+                        {plan.limits.storage === "unlimited"
+                          ? "Unlimited"
+                          : `${plan.limits.storage}GB`}
                       </span>
                     </div>
                   </div>
@@ -671,7 +805,9 @@ export function BillingManagement() {
                     className="w-full"
                     variant={plan.id === currentPlan ? "outline" : "default"}
                     disabled={plan.id === currentPlan}
-                    onClick={() => plan.id !== currentPlan && handleUpgradePlan(plan.id)}
+                    onClick={() =>
+                      plan.id !== currentPlan && handleUpgradePlan(plan.id)
+                    }
                   >
                     {plan.id === currentPlan ? "Current Plan" : "Select Plan"}
                   </Button>
@@ -688,7 +824,10 @@ export function BillingManagement() {
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle>Payment Methods</CardTitle>
-                  <Dialog open={showAddPaymentDialog} onOpenChange={setShowAddPaymentDialog}>
+                  <Dialog
+                    open={showAddPaymentDialog}
+                    onOpenChange={setShowAddPaymentDialog}
+                  >
                     <DialogTrigger asChild>
                       <Button size="sm">
                         <Plus className="h-4 w-4 mr-2" />
@@ -706,7 +845,10 @@ export function BillingManagement() {
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <Label htmlFor="cardNumber">Card Number</Label>
-                            <Input id="cardNumber" placeholder="1234 5678 9012 3456" />
+                            <Input
+                              id="cardNumber"
+                              placeholder="1234 5678 9012 3456"
+                            />
                           </div>
                           <div>
                             <Label htmlFor="expiryDate">Expiry Date</Label>
@@ -728,10 +870,17 @@ export function BillingManagement() {
                           <Input id="cardName" placeholder="John Doe" />
                         </div>
                         <div className="flex space-x-2">
-                          <Button onClick={handleAddPaymentMethod} className="flex-1">
+                          <Button
+                            onClick={handleAddPaymentMethod}
+                            className="flex-1"
+                          >
                             Add Payment Method
                           </Button>
-                          <Button variant="outline" onClick={() => setShowAddPaymentDialog(false)} className="flex-1">
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowAddPaymentDialog(false)}
+                            className="flex-1"
+                          >
                             Cancel
                           </Button>
                         </div>
@@ -753,13 +902,17 @@ export function BillingManagement() {
                           <div>
                             <p className="font-medium">{method.name}</p>
                             {method.expiryDate && (
-                              <p className="text-sm text-gray-500">Expires {method.expiryDate}</p>
+                              <p className="text-sm text-gray-500">
+                                Expires {method.expiryDate}
+                              </p>
                             )}
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
                           {method.isDefault && (
-                            <Badge variant="outline" className="text-green-600">Default</Badge>
+                            <Badge variant="outline" className="text-green-600">
+                              Default
+                            </Badge>
                           )}
                           <Button
                             size="sm"
@@ -839,9 +992,7 @@ export function BillingManagement() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button className="w-full">
-                    Update Billing Information
-                  </Button>
+                  <Button className="w-full">Update Billing Information</Button>
                 </div>
               </CardContent>
             </Card>
@@ -866,20 +1017,28 @@ export function BillingManagement() {
                         <div>
                           <p className="font-semibold">{invoice.id}</p>
                           <p className="text-sm text-gray-500">
-                            {invoice.period.start.toLocaleDateString()} - {invoice.period.end.toLocaleDateString()}
+                            {invoice.period.start.toLocaleDateString()} -{" "}
+                            {invoice.period.end.toLocaleDateString()}
                           </p>
                         </div>
-                        <Badge className={
-                          invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                          invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          invoice.status === 'overdue' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
-                        }>
+                        <Badge
+                          className={
+                            invoice.status === "paid"
+                              ? "bg-green-100 text-green-800"
+                              : invoice.status === "pending"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : invoice.status === "overdue"
+                                  ? "bg-red-100 text-red-800"
+                                  : "bg-gray-100 text-gray-800"
+                          }
+                        >
                           {invoice.status.toUpperCase()}
                         </Badge>
                       </div>
                       <div className="flex items-center space-x-4">
-                        <span className="font-semibold text-lg">${invoice.amount}</span>
+                        <span className="font-semibold text-lg">
+                          ${invoice.amount}
+                        </span>
                         <Button size="sm" variant="outline">
                           <Download className="h-4 w-4 mr-2" />
                           Download
@@ -893,7 +1052,10 @@ export function BillingManagement() {
                         </summary>
                         <div className="mt-2 space-y-2">
                           {invoice.items.map((item, index) => (
-                            <div key={index} className="flex justify-between py-1">
+                            <div
+                              key={index}
+                              className="flex justify-between py-1"
+                            >
                               <span>{item.description}</span>
                               <span>${item.total}</span>
                             </div>
@@ -915,17 +1077,24 @@ export function BillingManagement() {
           <DialogHeader>
             <DialogTitle>Upgrade Your Plan</DialogTitle>
             <DialogDescription>
-              Confirm your plan upgrade to unlock additional features and higher limits.
+              Confirm your plan upgrade to unlock additional features and higher
+              limits.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             {selectedPlan && (
               <div className="p-4 border rounded-lg bg-blue-50">
                 <h4 className="font-semibold">
-                  {subscriptionPlans.find(p => p.id === selectedPlan)?.name} Plan
+                  {subscriptionPlans.find((p) => p.id === selectedPlan)?.name}{" "}
+                  Plan
                 </h4>
                 <p className="text-sm text-gray-600">
-                  ${subscriptionPlans.find(p => p.id === selectedPlan)?.price[billingCycle]}
+                  $
+                  {
+                    subscriptionPlans.find((p) => p.id === selectedPlan)?.price[
+                      billingCycle
+                    ]
+                  }
                   /{billingCycle === "monthly" ? "month" : "year"}
                 </p>
               </div>
@@ -934,7 +1103,11 @@ export function BillingManagement() {
               <Button onClick={confirmUpgrade} className="flex-1">
                 Confirm Upgrade
               </Button>
-              <Button variant="outline" onClick={() => setShowUpgradeDialog(false)} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setShowUpgradeDialog(false)}
+                className="flex-1"
+              >
                 Cancel
               </Button>
             </div>

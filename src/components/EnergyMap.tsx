@@ -5,50 +5,66 @@ import dynamic from "next/dynamic";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Sun, Wind, Droplets, Zap, MapPin, RefreshCw, AlertCircle, DollarSign, Factory, Flame, Truck, Plus, X } from "lucide-react";
-import { energyDataService, type EnergyBlock, type GridData } from "@/lib/energy-data";
+import {
+  Sun,
+  Wind,
+  Droplets,
+  Zap,
+  MapPin,
+  RefreshCw,
+  AlertCircle,
+  DollarSign,
+  Factory,
+  Flame,
+  Truck,
+  Plus,
+  X,
+} from "lucide-react";
+import {
+  energyDataService,
+  type EnergyBlock,
+  type GridData,
+} from "@/lib/energy-data";
 import { useAuth, hasPermission } from "@/lib/auth-context";
 import { autoBiddingEngine } from "@/lib/auto-bidding";
 import { useWatchlist } from "@/lib/use-watchlist";
-// Leaflet import with dynamic loading
-import * as L from "leaflet";
-
-// Fix Leaflet icons on client side only
-if (typeof window !== "undefined") {
-
-  // Fix Leaflet default markers
-  delete (L.Icon.Default.prototype as any)._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDOC4xIDIgNSA1LjEgNSA5YzAgNS4yIDcgMTMgNyAxM3M3LTcuOCA3LTEzYzAtMy45LTMuMS03LTctN3oiIGZpbGw9IiMzQjgyRjYiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSI5IiByPSIyLjUiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=',
-    shadowUrl: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGVsbGlwc2UgY3g9IjIwIiBjeT0iMzgiIHJ4PSIxNSIgcnk9IjIiIGZpbGw9InJnYmEoMCwwLDAsMC4yKSIvPgo8L3N2Zz4K'
-  });
-}
 
 // Dynamically import map components to avoid SSR issues
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
+  { ssr: false },
 );
 
 const TileLayer = dynamic(
   () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
+  { ssr: false },
 );
 
 const Marker = dynamic(
   () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
+  { ssr: false },
 );
 
-const Popup = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Popup),
-  { ssr: false }
-);
+const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
+  ssr: false,
+});
 
 // Import useMapEvents hook
 import { useMapEvents } from "react-leaflet";
@@ -97,7 +113,10 @@ export function EnergyMap() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [isCreatingListing, setIsCreatingListing] = useState(false);
-  const [newListingLocation, setNewListingLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [newListingLocation, setNewListingLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
 
   // Auth context
@@ -105,7 +124,12 @@ export function EnergyMap() {
   const canCreateListings = user && hasPermission(user, "create_listings");
 
   // Watchlist functionality
-  const { addToWatchlist, removeFromWatchlist, isWatching, loading: watchlistLoading } = useWatchlist();
+  const {
+    addToWatchlist,
+    removeFromWatchlist,
+    isWatching,
+    loading: watchlistLoading,
+  } = useWatchlist();
 
   // New listing form state
   const [newListing, setNewListing] = useState({
@@ -117,7 +141,7 @@ export function EnergyMap() {
     duration: "",
     description: "",
     minBid: "",
-    behindTheFence: false
+    behindTheFence: false,
   });
 
   // Fetch real energy data
@@ -128,7 +152,7 @@ export function EnergyMap() {
 
       const [blocks, grid] = await Promise.all([
         energyDataService.getAllEnergyBlocks(),
-        energyDataService.getGridData()
+        energyDataService.getGridData(),
       ]);
 
       setEnergyData(blocks);
@@ -142,7 +166,8 @@ export function EnergyMap() {
 
         // Evaluate for auto-bidding if engine is running
         if (autoBiddingEngine.isRunning()) {
-          const bidResults = await autoBiddingEngine.evaluateEnergyBlocks(blocks);
+          const bidResults =
+            await autoBiddingEngine.evaluateEnergyBlocks(blocks);
           if (bidResults.length > 0) {
             console.log("🤖 Auto-bidding results:", bidResults);
           }
@@ -160,8 +185,26 @@ export function EnergyMap() {
     setIsClient(true);
     fetchEnergyData();
 
+    // Setup Leaflet icons for client-side only
+    if (typeof window !== "undefined") {
+      import("leaflet").then((L) => {
+        // Fix Leaflet default markers
+        delete (L.Icon.Default.prototype as any)._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconUrl:
+            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDOC4xIDIgNSA1LjEgNSA5YzAgNS4yIDcgMTMgNyAxM3M3LTcuOCA3LTEzYzAtMy45LTMuMS03LTctN3oiIGZpbGw9IiMzQjgyRjYiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSI5IiByPSIyLjUiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=",
+          shadowUrl:
+            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGVsbGlwc2UgY3g9IjIwIiBjeT0iMzgiIHJ4PSIxNSIgcnk9IjIiIGZpbGw9InJnYmEoMCwwLDAsMC4yKSIvPgo8L3N2Zz4K",
+        });
+      });
+    }
+
     // Request notification permissions for alerts
-    if (typeof window !== "undefined" && "Notification" in window && user?.userType === "consumer") {
+    if (
+      typeof window !== "undefined" &&
+      "Notification" in window &&
+      user?.userType === "consumer"
+    ) {
       if (Notification.permission === "default") {
         Notification.requestPermission().then((permission) => {
           console.log("🔔 Notification permission:", permission);
@@ -205,17 +248,19 @@ export function EnergyMap() {
       facilityType: newListing.facilityType as any,
       behindTheFence: newListing.behindTheFence,
       proximityRadius: newListing.behindTheFence ? 5 : undefined,
-      industrialSpecs: newListing.behindTheFence ? {
-        voltage: "480V",
-        frequency: 60,
-        reliability: 99.5,
-        minimumContract: 12,
-        maxCapacity: Number.parseFloat(newListing.available)
-      } : undefined
+      industrialSpecs: newListing.behindTheFence
+        ? {
+            voltage: "480V",
+            frequency: 60,
+            reliability: 99.5,
+            minimumContract: 12,
+            maxCapacity: Number.parseFloat(newListing.available),
+          }
+        : undefined,
     };
 
     // Add to current energy data
-    setEnergyData(prev => [...prev, energyBlock]);
+    setEnergyData((prev) => [...prev, energyBlock]);
 
     // Reset form
     setNewListing({
@@ -227,7 +272,7 @@ export function EnergyMap() {
       duration: "",
       description: "",
       minBid: "",
-      behindTheFence: false
+      behindTheFence: false,
     });
     setNewListingLocation(null);
     setShowCreateForm(false);
@@ -253,7 +298,9 @@ export function EnergyMap() {
           <div className="h-96 bg-gradient-to-br from-green-100 to-blue-100 rounded-lg border-2 border-dashed border-green-300 flex items-center justify-center">
             <div className="text-center">
               <MapPin className="h-12 w-12 text-green-600 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">Loading Interactive Map...</h3>
+              <h3 className="text-lg font-semibold text-gray-700 mb-2">
+                Loading Interactive Map...
+              </h3>
             </div>
           </div>
         </CardContent>
@@ -285,8 +332,12 @@ export function EnergyMap() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Grid Demand</p>
-                  <p className="text-xl font-bold text-blue-600">{(gridData.demand / 1000).toFixed(1)} GW</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    Grid Demand
+                  </p>
+                  <p className="text-xl font-bold text-blue-600">
+                    {(gridData.demand / 1000).toFixed(1)} GW
+                  </p>
                 </div>
                 <Zap className="h-6 w-6 text-blue-600" />
               </div>
@@ -297,8 +348,12 @@ export function EnergyMap() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Renewable Supply</p>
-                  <p className="text-xl font-bold text-green-600">{(gridData.supply / 1000).toFixed(1)} GW</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    Renewable Supply
+                  </p>
+                  <p className="text-xl font-bold text-green-600">
+                    {(gridData.supply / 1000).toFixed(1)} GW
+                  </p>
                 </div>
                 <Sun className="h-6 w-6 text-green-600" />
               </div>
@@ -310,7 +365,9 @@ export function EnergyMap() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-500">Avg Price</p>
-                  <p className="text-xl font-bold text-orange-600">${gridData.priceRange.avg.toFixed(0)}/MWh</p>
+                  <p className="text-xl font-bold text-orange-600">
+                    ${gridData.priceRange.avg.toFixed(0)}/MWh
+                  </p>
                 </div>
                 <DollarSign className="h-6 w-6 text-orange-600" />
               </div>
@@ -321,8 +378,12 @@ export function EnergyMap() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Curtailment</p>
-                  <p className="text-xl font-bold text-red-600">{gridData.curtailment.toFixed(0)} MW</p>
+                  <p className="text-sm font-medium text-gray-500">
+                    Curtailment
+                  </p>
+                  <p className="text-xl font-bold text-red-600">
+                    {gridData.curtailment.toFixed(0)} MW
+                  </p>
                 </div>
                 <AlertCircle className="h-6 w-6 text-red-600" />
               </div>
@@ -337,7 +398,9 @@ export function EnergyMap() {
             <div className="flex items-center space-x-2">
               <MapPin className="h-5 w-5 text-green-600" />
               <span>Real-Time Excess Energy Map</span>
-              {loading && <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />}
+              {loading && (
+                <RefreshCw className="h-4 w-4 animate-spin text-blue-500" />
+              )}
             </div>
             <div className="flex items-center space-x-2">
               {error && (
@@ -371,8 +434,15 @@ export function EnergyMap() {
                   )}
                 </Button>
               )}
-              <Button size="sm" variant="outline" onClick={handleRefresh} disabled={loading}>
-                <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleRefresh}
+                disabled={loading}
+              >
+                <RefreshCw
+                  className={`h-4 w-4 ${loading ? "animate-spin" : ""}`}
+                />
               </Button>
             </div>
           </CardTitle>
@@ -384,7 +454,8 @@ export function EnergyMap() {
               <div className="flex items-center space-x-2">
                 <Plus className="h-4 w-4 text-blue-600" />
                 <span className="text-sm font-medium text-blue-800">
-                  Create Energy Listing Mode: Click anywhere on the map to drop a pin and create a new energy offering.
+                  Create Energy Listing Mode: Click anywhere on the map to drop
+                  a pin and create a new energy offering.
                 </span>
               </div>
             </div>
@@ -392,10 +463,10 @@ export function EnergyMap() {
 
           <div className="h-96 rounded-lg overflow-hidden relative">
             <MapContainer
-              center={[37.7749, -96.0000]}
+              center={[37.7749, -96.0]}
               zoom={4}
               style={{ height: "100%", width: "100%" }}
-              className={`rounded-lg ${isCreatingListing ? 'cursor-crosshair' : ''}`}
+              className={`rounded-lg ${isCreatingListing ? "cursor-crosshair" : ""}`}
             >
               <MapClickHandler />
               <TileLayer
@@ -409,15 +480,19 @@ export function EnergyMap() {
                   position={[newListingLocation.lat, newListingLocation.lng]}
                   icon={L?.divIcon({
                     html: `<div style="background: #10B981; border: 2px solid #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 16px;">📍</div>`,
-                    className: 'custom-div-icon',
+                    className: "custom-div-icon",
                     iconSize: [30, 30],
-                    iconAnchor: [15, 15]
+                    iconAnchor: [15, 15],
                   })}
                 >
                   <Popup>
                     <div className="p-2">
-                      <h3 className="font-semibold text-green-600">New Energy Listing</h3>
-                      <p className="text-sm text-gray-600">Click to configure details</p>
+                      <h3 className="font-semibold text-green-600">
+                        New Energy Listing
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        Click to configure details
+                      </p>
                     </div>
                   </Popup>
                 </Marker>
@@ -429,14 +504,22 @@ export function EnergyMap() {
                   if (block.behindTheFence) return "🏭"; // Industrial behind-the-fence
 
                   switch (block.type) {
-                    case "Solar": return "☀️";
-                    case "Wind": return "💨";
-                    case "Hydro": return "💧";
-                    case "Natural Gas": return "🔥";
-                    case "Cogeneration": return "⚡";
-                    case "Industrial Steam": return "🏭";
-                    case "LNG": return "🚛";
-                    default: return "⚡";
+                    case "Solar":
+                      return "☀️";
+                    case "Wind":
+                      return "💨";
+                    case "Hydro":
+                      return "💧";
+                    case "Natural Gas":
+                      return "🔥";
+                    case "Cogeneration":
+                      return "⚡";
+                    case "Industrial Steam":
+                      return "🏭";
+                    case "LNG":
+                      return "🚛";
+                    default:
+                      return "⚡";
                   }
                 };
 
@@ -445,11 +528,16 @@ export function EnergyMap() {
                   if (block.behindTheFence) return "#F59E0B"; // Amber for behind-the-fence
 
                   switch (block.facilityType) {
-                    case "Renewable": return "#10B981"; // Green for renewable
-                    case "Refinery": return "#DC2626"; // Red for refineries
-                    case "Chemical Plant": return "#7C3AED"; // Purple for chemical
-                    case "LNG Terminal": return "#F59E0B"; // Amber for LNG
-                    default: return "#3B82F6"; // Blue default
+                    case "Renewable":
+                      return "#10B981"; // Green for renewable
+                    case "Refinery":
+                      return "#DC2626"; // Red for refineries
+                    case "Chemical Plant":
+                      return "#7C3AED"; // Purple for chemical
+                    case "LNG Terminal":
+                      return "#F59E0B"; // Amber for LNG
+                    default:
+                      return "#3B82F6"; // Blue default
                   }
                 };
 
@@ -462,12 +550,13 @@ export function EnergyMap() {
                     position={[block.coordinates.lat, block.coordinates.lng]}
                     icon={L?.divIcon({
                       html: `<div style="background: ${color}; border: 2px solid #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 14px;">${emoji}</div>`,
-                      className: 'custom-div-icon',
+                      className: "custom-div-icon",
                       iconSize: [30, 30],
-                      iconAnchor: [15, 15]
+                      iconAnchor: [15, 15],
                     })}
                     eventHandlers={{
-                      click: () => !isCreatingListing && setSelectedBlock(block),
+                      click: () =>
+                        !isCreatingListing && setSelectedBlock(block),
                     }}
                   >
                     <Popup>
@@ -477,42 +566,86 @@ export function EnergyMap() {
                           <h3 className="font-semibold">{block.location}</h3>
                         </div>
                         <div className="space-y-1 text-sm">
-                          <p><span className="font-medium">Type:</span> {block.type}</p>
-                          <p><span className="font-medium">Facility:</span> {block.facilityType}</p>
-                          <p><span className="font-medium">Available:</span> {block.available.toFixed(1)} MWh</p>
-                          <p><span className="font-medium">Price:</span>
-                            <span className={block.price < 0 ? "text-green-600 font-bold" : "text-blue-600 font-bold"}>
+                          <p>
+                            <span className="font-medium">Type:</span>{" "}
+                            {block.type}
+                          </p>
+                          <p>
+                            <span className="font-medium">Facility:</span>{" "}
+                            {block.facilityType}
+                          </p>
+                          <p>
+                            <span className="font-medium">Available:</span>{" "}
+                            {block.available.toFixed(1)} MWh
+                          </p>
+                          <p>
+                            <span className="font-medium">Price:</span>
+                            <span
+                              className={
+                                block.price < 0
+                                  ? "text-green-600 font-bold"
+                                  : "text-blue-600 font-bold"
+                              }
+                            >
                               ${block.price.toFixed(3)}/kWh
                             </span>
                           </p>
-                          <p><span className="font-medium">Grid:</span> {block.gridOperator}</p>
-                          <p><span className="font-medium">Producer:</span> {block.producer}</p>
+                          <p>
+                            <span className="font-medium">Grid:</span>{" "}
+                            {block.gridOperator}
+                          </p>
+                          <p>
+                            <span className="font-medium">Producer:</span>{" "}
+                            {block.producer}
+                          </p>
                           {block.behindTheFence && (
-                            <Badge variant="secondary" className="bg-orange-100 text-orange-800 text-xs mt-1">
+                            <Badge
+                              variant="secondary"
+                              className="bg-orange-100 text-orange-800 text-xs mt-1"
+                            >
                               🏭 Behind-the-Fence (On-site Power)
                             </Badge>
                           )}
                           {block.curtailed && (
-                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800 text-xs mt-1">
+                            <Badge
+                              variant="secondary"
+                              className="bg-yellow-100 text-yellow-800 text-xs mt-1"
+                            >
                               🔄 Curtailed Energy
                             </Badge>
                           )}
                           {block.proximityRadius && (
-                            <p><span className="font-medium">Range:</span> {block.proximityRadius}km radius</p>
+                            <p>
+                              <span className="font-medium">Range:</span>{" "}
+                              {block.proximityRadius}km radius
+                            </p>
                           )}
                           {block.industrialSpecs && (
                             <div className="mt-2 p-2 bg-gray-100 rounded text-xs">
-                              <p><strong>Industrial Specs:</strong></p>
+                              <p>
+                                <strong>Industrial Specs:</strong>
+                              </p>
                               <p>• Voltage: {block.industrialSpecs.voltage}</p>
-                              <p>• Reliability: {block.industrialSpecs.reliability.toFixed(1)}%</p>
-                              <p>• Min Contract: {block.industrialSpecs.minimumContract}h</p>
+                              <p>
+                                • Reliability:{" "}
+                                {block.industrialSpecs.reliability.toFixed(1)}%
+                              </p>
+                              <p>
+                                • Min Contract:{" "}
+                                {block.industrialSpecs.minimumContract}h
+                              </p>
                             </div>
                           )}
                           {block.timeRemaining && (
-                            <p><span className="font-medium">Time Left:</span> {block.timeRemaining}</p>
+                            <p>
+                              <span className="font-medium">Time Left:</span>{" "}
+                              {block.timeRemaining}
+                            </p>
                           )}
                         </div>
-                        <Badge className={`mt-2 ${getStatusColor(block.status)}`}>
+                        <Badge
+                          className={`mt-2 ${getStatusColor(block.status)}`}
+                        >
                           {block.status.toUpperCase()}
                         </Badge>
                       </div>
@@ -526,36 +659,66 @@ export function EnergyMap() {
           {/* Map Controls */}
           <div className="flex flex-wrap gap-2 mt-4">
             {/* Renewable Energy Sources */}
-            <Badge variant="outline" className="border-yellow-300 text-yellow-700 cursor-pointer hover:bg-yellow-50">
+            <Badge
+              variant="outline"
+              className="border-yellow-300 text-yellow-700 cursor-pointer hover:bg-yellow-50"
+            >
               <Sun className="h-3 w-3 mr-1" />
-              Solar ({energyData.filter(b => b.type === "Solar").length})
+              Solar ({energyData.filter((b) => b.type === "Solar").length})
             </Badge>
-            <Badge variant="outline" className="border-blue-300 text-blue-700 cursor-pointer hover:bg-blue-50">
+            <Badge
+              variant="outline"
+              className="border-blue-300 text-blue-700 cursor-pointer hover:bg-blue-50"
+            >
               <Wind className="h-3 w-3 mr-1" />
-              Wind ({energyData.filter(b => b.type === "Wind").length})
+              Wind ({energyData.filter((b) => b.type === "Wind").length})
             </Badge>
-            <Badge variant="outline" className="border-cyan-300 text-cyan-700 cursor-pointer hover:bg-cyan-50">
+            <Badge
+              variant="outline"
+              className="border-cyan-300 text-cyan-700 cursor-pointer hover:bg-cyan-50"
+            >
               <Droplets className="h-3 w-3 mr-1" />
-              Hydro ({energyData.filter(b => b.type === "Hydro").length})
+              Hydro ({energyData.filter((b) => b.type === "Hydro").length})
             </Badge>
 
             {/* Industrial Energy Sources */}
-            <Badge variant="outline" className="border-red-300 text-red-700 cursor-pointer hover:bg-red-50">
+            <Badge
+              variant="outline"
+              className="border-red-300 text-red-700 cursor-pointer hover:bg-red-50"
+            >
               <Factory className="h-3 w-3 mr-1" />
-              Refineries ({energyData.filter(b => b.facilityType === "Refinery").length})
+              Refineries (
+              {energyData.filter((b) => b.facilityType === "Refinery").length})
             </Badge>
-            <Badge variant="outline" className="border-purple-300 text-purple-700 cursor-pointer hover:bg-purple-50">
+            <Badge
+              variant="outline"
+              className="border-purple-300 text-purple-700 cursor-pointer hover:bg-purple-50"
+            >
               <Flame className="h-3 w-3 mr-1" />
-              Chemical ({energyData.filter(b => b.facilityType === "Chemical Plant").length})
+              Chemical (
+              {
+                energyData.filter((b) => b.facilityType === "Chemical Plant")
+                  .length
+              }
+              )
             </Badge>
-            <Badge variant="outline" className="border-orange-300 text-orange-700 cursor-pointer hover:bg-orange-50">
+            <Badge
+              variant="outline"
+              className="border-orange-300 text-orange-700 cursor-pointer hover:bg-orange-50"
+            >
               <Truck className="h-3 w-3 mr-1" />
-              LNG ({energyData.filter(b => b.facilityType === "LNG Terminal").length})
+              LNG (
+              {
+                energyData.filter((b) => b.facilityType === "LNG Terminal")
+                  .length
+              }
+              )
             </Badge>
 
             {/* Behind-the-Fence Indicator */}
             <Badge variant="outline" className="border-gray-400 text-gray-600">
-              🏭 Behind-Fence ({energyData.filter(b => b.behindTheFence).length})
+              🏭 Behind-Fence (
+              {energyData.filter((b) => b.behindTheFence).length})
             </Badge>
           </div>
         </CardContent>
@@ -581,28 +744,46 @@ export function EnergyMap() {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
               <div>
-                <p className="text-sm font-medium text-gray-500">Available Energy</p>
-                <p className="text-lg font-bold text-blue-600">{selectedBlock.available.toFixed(1)} MWh</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Available Energy
+                </p>
+                <p className="text-lg font-bold text-blue-600">
+                  {selectedBlock.available.toFixed(1)} MWh
+                </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Price per kWh</p>
-                <p className={`text-lg font-bold ${selectedBlock.price < 0 ? 'text-green-600' : 'text-blue-600'}`}>
+                <p className="text-sm font-medium text-gray-500">
+                  Price per kWh
+                </p>
+                <p
+                  className={`text-lg font-bold ${selectedBlock.price < 0 ? "text-green-600" : "text-blue-600"}`}
+                >
                   ${selectedBlock.price.toFixed(3)}
                 </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Grid Operator</p>
-                <p className="text-lg font-bold text-purple-600">{selectedBlock.gridOperator}</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Grid Operator
+                </p>
+                <p className="text-lg font-bold text-purple-600">
+                  {selectedBlock.gridOperator}
+                </p>
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Time Remaining</p>
-                <p className="text-lg font-bold text-orange-600">{selectedBlock.timeRemaining || "N/A"}</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Time Remaining
+                </p>
+                <p className="text-lg font-bold text-orange-600">
+                  {selectedBlock.timeRemaining || "N/A"}
+                </p>
               </div>
             </div>
 
             <div className="mb-4">
               <p className="text-sm font-medium text-gray-500 mb-2">Producer</p>
-              <p className="text-lg font-bold text-gray-700">{selectedBlock.producer}</p>
+              <p className="text-lg font-bold text-gray-700">
+                {selectedBlock.producer}
+              </p>
               {selectedBlock.curtailed && (
                 <Badge className="bg-yellow-100 text-yellow-800 mt-2">
                   ⚡ Curtailed Surplus Energy - Negative Pricing
@@ -616,15 +797,20 @@ export function EnergyMap() {
                   className="flex-1"
                   onClick={() => {
                     // Navigate to live bidding interface for this energy block
-                    const biddingTab = document.querySelector('[value="bidding"]') as HTMLElement;
+                    const biddingTab = document.querySelector(
+                      '[value="bidding"]',
+                    ) as HTMLElement;
                     if (biddingTab) {
                       biddingTab.click();
                     }
                     // Show success notification
-                    if (typeof window !== "undefined" && Notification.permission === "granted") {
+                    if (
+                      typeof window !== "undefined" &&
+                      Notification.permission === "granted"
+                    ) {
                       new Notification("Navigating to Bidding! 🎯", {
                         body: `Opening live bidding interface for ${selectedBlock.location}`,
-                        icon: "⚡"
+                        icon: "⚡",
                       });
                     }
                   }}
@@ -659,15 +845,20 @@ export function EnergyMap() {
                   className="flex-1"
                   onClick={() => {
                     // Navigate to live bidding interface for this energy block
-                    const biddingTab = document.querySelector('[value="bidding"]') as HTMLElement;
+                    const biddingTab = document.querySelector(
+                      '[value="bidding"]',
+                    ) as HTMLElement;
                     if (biddingTab) {
                       biddingTab.click();
                     }
                     // Show success notification
-                    if (typeof window !== "undefined" && Notification.permission === "granted") {
+                    if (
+                      typeof window !== "undefined" &&
+                      Notification.permission === "granted"
+                    ) {
                       new Notification("Viewing Live Bids! 📊", {
                         body: `Opening live bidding interface for ${selectedBlock.location}`,
-                        icon: "⚡"
+                        icon: "⚡",
                       });
                     }
                   }}
@@ -705,7 +896,8 @@ export function EnergyMap() {
           <DialogHeader>
             <DialogTitle>Create Energy Listing</DialogTitle>
             <DialogDescription>
-              Configure your energy offering details to open bidding to the marketplace.
+              Configure your energy offering details to open bidding to the
+              marketplace.
             </DialogDescription>
           </DialogHeader>
 
@@ -717,14 +909,21 @@ export function EnergyMap() {
                   id="location"
                   placeholder="e.g. Solar Farm Alpha"
                   value={newListing.location}
-                  onChange={(e) => setNewListing(prev => ({ ...prev, location: e.target.value }))}
+                  onChange={(e) =>
+                    setNewListing((prev) => ({
+                      ...prev,
+                      location: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
                 <Label htmlFor="type">Energy Type</Label>
                 <Select
                   value={newListing.type}
-                  onValueChange={(value) => setNewListing(prev => ({ ...prev, type: value }))}
+                  onValueChange={(value) =>
+                    setNewListing((prev) => ({ ...prev, type: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
@@ -735,7 +934,9 @@ export function EnergyMap() {
                     <SelectItem value="Hydro">Hydro</SelectItem>
                     <SelectItem value="Natural Gas">Natural Gas</SelectItem>
                     <SelectItem value="Cogeneration">Cogeneration</SelectItem>
-                    <SelectItem value="Industrial Steam">Industrial Steam</SelectItem>
+                    <SelectItem value="Industrial Steam">
+                      Industrial Steam
+                    </SelectItem>
                     <SelectItem value="LNG">LNG</SelectItem>
                   </SelectContent>
                 </Select>
@@ -747,7 +948,9 @@ export function EnergyMap() {
                 <Label htmlFor="facilityType">Facility Type</Label>
                 <Select
                   value={newListing.facilityType}
-                  onValueChange={(value) => setNewListing(prev => ({ ...prev, facilityType: value }))}
+                  onValueChange={(value) =>
+                    setNewListing((prev) => ({ ...prev, facilityType: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select facility" />
@@ -755,9 +958,13 @@ export function EnergyMap() {
                   <SelectContent>
                     <SelectItem value="Renewable">Renewable Plant</SelectItem>
                     <SelectItem value="Refinery">Oil Refinery</SelectItem>
-                    <SelectItem value="Chemical Plant">Chemical Plant</SelectItem>
+                    <SelectItem value="Chemical Plant">
+                      Chemical Plant
+                    </SelectItem>
                     <SelectItem value="LNG Terminal">LNG Terminal</SelectItem>
-                    <SelectItem value="Industrial Complex">Industrial Complex</SelectItem>
+                    <SelectItem value="Industrial Complex">
+                      Industrial Complex
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -768,7 +975,12 @@ export function EnergyMap() {
                   type="number"
                   placeholder="25.5"
                   value={newListing.available}
-                  onChange={(e) => setNewListing(prev => ({ ...prev, available: e.target.value }))}
+                  onChange={(e) =>
+                    setNewListing((prev) => ({
+                      ...prev,
+                      available: e.target.value,
+                    }))
+                  }
                 />
               </div>
             </div>
@@ -781,14 +993,21 @@ export function EnergyMap() {
                   type="number"
                   placeholder="45.00"
                   value={newListing.price}
-                  onChange={(e) => setNewListing(prev => ({ ...prev, price: e.target.value }))}
+                  onChange={(e) =>
+                    setNewListing((prev) => ({
+                      ...prev,
+                      price: e.target.value,
+                    }))
+                  }
                 />
               </div>
               <div>
                 <Label htmlFor="duration">Auction Duration</Label>
                 <Select
                   value={newListing.duration}
-                  onValueChange={(value) => setNewListing(prev => ({ ...prev, duration: value }))}
+                  onValueChange={(value) =>
+                    setNewListing((prev) => ({ ...prev, duration: value }))
+                  }
                 >
                   <SelectTrigger>
                     <SelectValue placeholder="Select duration" />
@@ -811,7 +1030,12 @@ export function EnergyMap() {
                 id="description"
                 placeholder="Additional details about this energy offering..."
                 value={newListing.description}
-                onChange={(e) => setNewListing(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) =>
+                  setNewListing((prev) => ({
+                    ...prev,
+                    description: e.target.value,
+                  }))
+                }
                 rows={3}
               />
             </div>
@@ -821,7 +1045,12 @@ export function EnergyMap() {
                 type="checkbox"
                 id="behindTheFence"
                 checked={newListing.behindTheFence}
-                onChange={(e) => setNewListing(prev => ({ ...prev, behindTheFence: e.target.checked }))}
+                onChange={(e) =>
+                  setNewListing((prev) => ({
+                    ...prev,
+                    behindTheFence: e.target.checked,
+                  }))
+                }
                 className="rounded"
               />
               <Label htmlFor="behindTheFence" className="text-sm">
@@ -831,7 +1060,8 @@ export function EnergyMap() {
 
             {newListingLocation && (
               <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
-                <strong>Location:</strong> {newListingLocation.lat.toFixed(4)}, {newListingLocation.lng.toFixed(4)}
+                <strong>Location:</strong> {newListingLocation.lat.toFixed(4)},{" "}
+                {newListingLocation.lng.toFixed(4)}
               </div>
             )}
 
@@ -839,7 +1069,12 @@ export function EnergyMap() {
               <Button
                 onClick={handleCreateListing}
                 className="flex-1"
-                disabled={!newListing.location || !newListing.type || !newListing.available || !newListing.price}
+                disabled={
+                  !newListing.location ||
+                  !newListing.type ||
+                  !newListing.available ||
+                  !newListing.price
+                }
               >
                 Create Listing
               </Button>

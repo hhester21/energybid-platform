@@ -1,7 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -16,7 +22,7 @@ import {
   CheckCircle,
   Clock,
   ExternalLink,
-  Download
+  Download,
 } from "lucide-react";
 
 interface GreenCertificate {
@@ -48,12 +54,12 @@ const mockCertificates: GreenCertificate[] = [
     blockchain: {
       hash: "0x3f7b..8d9c",
       network: "Energy Web Chain",
-      verified: true
+      verified: true,
     },
     energySource: "Solar",
     status: "active",
     tradeable: true,
-    value: 127.50
+    value: 127.5,
   },
   {
     id: "CC-2024-002",
@@ -65,12 +71,12 @@ const mockCertificates: GreenCertificate[] = [
     blockchain: {
       hash: "0x8c4a..5f1e",
       network: "Polygon",
-      verified: true
+      verified: true,
     },
     energySource: "Wind",
     status: "active",
     tradeable: true,
-    value: 456.00
+    value: 456.0,
   },
   {
     id: "GEB-2024-003",
@@ -82,13 +88,13 @@ const mockCertificates: GreenCertificate[] = [
     blockchain: {
       hash: "0x2e8b..4a7c",
       network: "Energy Web Chain",
-      verified: true
+      verified: true,
     },
     energySource: "Hydro",
     status: "active",
     tradeable: false,
-    value: 0
-  }
+    value: 0,
+  },
 ];
 
 const getSourceColor = (source: string) => {
@@ -118,12 +124,19 @@ const getStatusColor = (status: string) => {
 };
 
 export function GreenCertificationTracker() {
-  const [selectedCert, setSelectedCert] = useState<GreenCertificate | null>(null);
+  const [selectedCert, setSelectedCert] = useState<GreenCertificate | null>(
+    null,
+  );
 
-  const totalValue = mockCertificates.reduce((sum, cert) => sum + cert.value, 0);
-  const activeCerts = mockCertificates.filter(cert => cert.status === "active").length;
+  const totalValue = mockCertificates.reduce(
+    (sum, cert) => sum + cert.value,
+    0,
+  );
+  const activeCerts = mockCertificates.filter(
+    (cert) => cert.status === "active",
+  ).length;
   const totalCarbon = mockCertificates
-    .filter(cert => cert.type === "Carbon Credit")
+    .filter((cert) => cert.type === "Carbon Credit")
     .reduce((sum, cert) => sum + cert.amount, 0);
 
   return (
@@ -134,8 +147,12 @@ export function GreenCertificationTracker() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Certificates</p>
-                <p className="text-2xl font-bold text-green-600">{activeCerts}</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Total Certificates
+                </p>
+                <p className="text-2xl font-bold text-green-600">
+                  {activeCerts}
+                </p>
               </div>
               <Award className="h-8 w-8 text-green-600" />
             </div>
@@ -146,8 +163,12 @@ export function GreenCertificationTracker() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Portfolio Value</p>
-                <p className="text-2xl font-bold text-blue-600">${totalValue.toFixed(2)}</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Portfolio Value
+                </p>
+                <p className="text-2xl font-bold text-blue-600">
+                  ${totalValue.toFixed(2)}
+                </p>
               </div>
               <TrendingUp className="h-8 w-8 text-blue-600" />
             </div>
@@ -158,8 +179,12 @@ export function GreenCertificationTracker() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Carbon Offset</p>
-                <p className="text-2xl font-bold text-purple-600">{totalCarbon.toFixed(1)}t</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Carbon Offset
+                </p>
+                <p className="text-2xl font-bold text-purple-600">
+                  {totalCarbon.toFixed(1)}t
+                </p>
               </div>
               <Leaf className="h-8 w-8 text-purple-600" />
             </div>
@@ -170,7 +195,9 @@ export function GreenCertificationTracker() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-500">Verification Rate</p>
+                <p className="text-sm font-medium text-gray-500">
+                  Verification Rate
+                </p>
                 <p className="text-2xl font-bold text-orange-600">100%</p>
               </div>
               <Shield className="h-8 w-8 text-orange-600" />
@@ -214,7 +241,9 @@ export function GreenCertificationTracker() {
                             <Award className="h-6 w-6 text-blue-600" />
                             <div>
                               <h3 className="font-semibold">{cert.type}</h3>
-                              <p className="text-sm text-gray-500">ID: {cert.id}</p>
+                              <p className="text-sm text-gray-500">
+                                ID: {cert.id}
+                              </p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -230,22 +259,31 @@ export function GreenCertificationTracker() {
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-3">
                           <div>
                             <p className="text-xs text-gray-500">Amount</p>
-                            <p className="font-bold">{cert.amount} {cert.unit}</p>
+                            <p className="font-bold">
+                              {cert.amount} {cert.unit}
+                            </p>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500">Source</p>
-                            <Badge className={getSourceColor(cert.energySource)} variant="secondary">
+                            <Badge
+                              className={getSourceColor(cert.energySource)}
+                              variant="secondary"
+                            >
                               {cert.energySource}
                             </Badge>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500">Issue Date</p>
-                            <p className="font-medium">{cert.issueDate.toLocaleDateString()}</p>
+                            <p className="font-medium">
+                              {cert.issueDate.toLocaleDateString()}
+                            </p>
                           </div>
                           <div>
                             <p className="text-xs text-gray-500">Value</p>
                             <p className="font-bold text-green-600">
-                              {cert.value > 0 ? `$${cert.value.toFixed(2)}` : "Non-tradeable"}
+                              {cert.value > 0
+                                ? `$${cert.value.toFixed(2)}`
+                                : "Non-tradeable"}
                             </p>
                           </div>
                         </div>
@@ -287,26 +325,39 @@ export function GreenCertificationTracker() {
                   </CardHeader>
                   <CardContent className="space-y-4">
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Certificate ID</p>
-                      <p className="font-mono text-sm bg-gray-100 p-2 rounded">{selectedCert.id}</p>
+                      <p className="text-sm font-medium text-gray-500">
+                        Certificate ID
+                      </p>
+                      <p className="font-mono text-sm bg-gray-100 p-2 rounded">
+                        {selectedCert.id}
+                      </p>
                     </div>
 
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Blockchain Hash</p>
+                      <p className="text-sm font-medium text-gray-500">
+                        Blockchain Hash
+                      </p>
                       <p className="font-mono text-sm bg-gray-100 p-2 rounded truncate">
                         {selectedCert.blockchain.hash}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Network</p>
-                      <p className="text-sm">{selectedCert.blockchain.network}</p>
+                      <p className="text-sm font-medium text-gray-500">
+                        Network
+                      </p>
+                      <p className="text-sm">
+                        {selectedCert.blockchain.network}
+                      </p>
                     </div>
 
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Validity Period</p>
+                      <p className="text-sm font-medium text-gray-500">
+                        Validity Period
+                      </p>
                       <p className="text-sm">
-                        {selectedCert.issueDate.toLocaleDateString()} - {selectedCert.expiryDate.toLocaleDateString()}
+                        {selectedCert.issueDate.toLocaleDateString()} -{" "}
+                        {selectedCert.expiryDate.toLocaleDateString()}
                       </p>
                     </div>
 
@@ -317,31 +368,36 @@ export function GreenCertificationTracker() {
                         onClick={() => {
                           // Create downloadable certificate
                           const certData = `GREEN ENERGY CERTIFICATE
-Certificate ID: ${cert.id}
-Type: ${cert.type}
-Amount: ${cert.amount} MWh
-Date: ${cert.date}
-Verification: ${cert.verificationStatus}
+Certificate ID: ${selectedCert.id}
+Type: ${selectedCert.type}
+Amount: ${selectedCert.amount} MWh
+Date: ${selectedCert.issueDate.toLocaleDateString()}
+Status: ${selectedCert.status}
 
 This certificate represents verified renewable energy consumption
 and carbon footprint reduction through the EnergyBid platform.
 
 Generated on: ${new Date().toLocaleDateString()}`;
 
-                          const blob = new Blob([certData], { type: 'text/plain' });
+                          const blob = new Blob([certData], {
+                            type: "text/plain",
+                          });
                           const url = window.URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.style.display = 'none';
+                          const a = document.createElement("a");
+                          a.style.display = "none";
                           a.href = url;
-                          a.download = `green-certificate-${cert.id}.txt`;
+                          a.download = `green-certificate-${selectedCert.id}.txt`;
                           document.body.appendChild(a);
                           a.click();
                           window.URL.revokeObjectURL(url);
 
-                          if (typeof window !== "undefined" && Notification.permission === "granted") {
+                          if (
+                            typeof window !== "undefined" &&
+                            Notification.permission === "granted"
+                          ) {
                             new Notification("Certificate Downloaded! 📄", {
-                              body: `Green certificate ${cert.id} downloaded successfully`,
-                              icon: "🏆"
+                              body: `Green certificate ${selectedCert.id} downloaded successfully`,
+                              icon: "🏆",
                             });
                           }
                         }}
@@ -355,7 +411,9 @@ Generated on: ${new Date().toLocaleDateString()}`;
                         className="flex-1"
                         onClick={() => {
                           // Simulate blockchain verification
-                          alert(`🔍 Certificate Verification\n\nCertificate ID: ${cert.id}\nType: ${cert.type}\nAmount: ${cert.amount} MWh\nStatus: ${cert.verificationStatus}\n\nBlockchain Hash: 0x${Math.random().toString(16).substring(2, 10)}\nTimestamp: ${cert.date}\n\n✅ Certificate verified on blockchain\n🌍 Carbon credits: ${(cert.amount * 0.4).toFixed(1)}t CO₂`);
+                          alert(
+                            `🔍 Certificate Verification\n\nCertificate ID: ${selectedCert.id}\nType: ${selectedCert.type}\nAmount: ${selectedCert.amount} MWh\nStatus: ${selectedCert.status}\n\nBlockchain Hash: 0x${Math.random().toString(16).substring(2, 10)}\nTimestamp: ${selectedCert.issueDate.toLocaleDateString()}\n\n✅ Certificate verified on blockchain\n🌍 Carbon credits: ${(selectedCert.amount * 0.4).toFixed(1)}t CO₂`,
+                          );
                         }}
                       >
                         <ExternalLink className="h-4 w-4 mr-2" />
@@ -368,7 +426,9 @@ Generated on: ${new Date().toLocaleDateString()}`;
                 <Card className="bg-white/60 backdrop-blur-sm">
                   <CardContent className="p-6 text-center">
                     <Award className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-500">Select a certificate to view details</p>
+                    <p className="text-gray-500">
+                      Select a certificate to view details
+                    </p>
                   </CardContent>
                 </Card>
               )}
@@ -376,7 +436,9 @@ Generated on: ${new Date().toLocaleDateString()}`;
               {/* Progress to Next Level */}
               <Card className="bg-white/60 backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="text-sm">Progress to Gold Status</CardTitle>
+                  <CardTitle className="text-sm">
+                    Progress to Gold Status
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
@@ -406,14 +468,14 @@ Generated on: ${new Date().toLocaleDateString()}`;
             <CardContent>
               <div className="text-center py-12">
                 <TrendingUp className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">Trading Platform Coming Soon</h3>
+                <h3 className="text-lg font-semibold mb-2">
+                  Trading Platform Coming Soon
+                </h3>
                 <p className="text-gray-500 max-w-md mx-auto">
-                  Buy and sell green certificates on our blockchain-powered marketplace.
-                  Get early access notifications when we launch.
+                  Buy and sell green certificates on our blockchain-powered
+                  marketplace. Get early access notifications when we launch.
                 </p>
-                <Button className="mt-4">
-                  Join Waitlist
-                </Button>
+                <Button className="mt-4">Join Waitlist</Button>
               </div>
             </CardContent>
           </Card>
@@ -427,7 +489,8 @@ Generated on: ${new Date().toLocaleDateString()}`;
                 <span>Blockchain Verification</span>
               </CardTitle>
               <CardDescription>
-                All certificates are verified on blockchain networks for transparency
+                All certificates are verified on blockchain networks for
+                transparency
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -439,7 +502,9 @@ Generated on: ${new Date().toLocaleDateString()}`;
                         <CheckCircle className="h-8 w-8 text-green-500" />
                         <div>
                           <h3 className="font-semibold">Energy Web Chain</h3>
-                          <p className="text-sm text-gray-500">2 certificates verified</p>
+                          <p className="text-sm text-gray-500">
+                            2 certificates verified
+                          </p>
                         </div>
                       </div>
                     </CardContent>
@@ -451,7 +516,9 @@ Generated on: ${new Date().toLocaleDateString()}`;
                         <CheckCircle className="h-8 w-8 text-green-500" />
                         <div>
                           <h3 className="font-semibold">Polygon Network</h3>
-                          <p className="text-sm text-gray-500">1 certificate verified</p>
+                          <p className="text-sm text-gray-500">
+                            1 certificate verified
+                          </p>
                         </div>
                       </div>
                     </CardContent>
@@ -464,9 +531,14 @@ Generated on: ${new Date().toLocaleDateString()}`;
                     Verification Process
                   </h4>
                   <ol className="text-sm space-y-1 text-gray-600">
-                    <li>1. Energy consumption data is collected from smart meters</li>
+                    <li>
+                      1. Energy consumption data is collected from smart meters
+                    </li>
                     <li>2. Renewable source is verified by grid operators</li>
-                    <li>3. Certificate is minted on blockchain with immutable record</li>
+                    <li>
+                      3. Certificate is minted on blockchain with immutable
+                      record
+                    </li>
                     <li>4. Third-party auditor validates the certificate</li>
                     <li>5. Certificate becomes tradeable on marketplace</li>
                   </ol>
