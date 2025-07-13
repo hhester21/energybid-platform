@@ -191,7 +191,7 @@ class CAISOApiService {
     }));
   }
 
-  private parseCAISOGeneration(data: any): GenerationData[] {
+  private parseCAISOGeneration(data: CAISOApiResponse): GenerationData[] {
     if (!data?.data) return this.getFallbackGeneration();
 
     return data.data.map((item: any) => ({
