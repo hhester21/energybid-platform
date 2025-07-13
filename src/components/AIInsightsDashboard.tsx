@@ -694,7 +694,7 @@ export function AIInsightsDashboard() {
                                   }
                                 } else {
                                   alert(
-                                    `🤖 AI Recommendation\n\nOpportunity: ${opportunity.opportunityType.replace("_", " ")}\nConfidence: ${opportunity.confidence}%\nPotential Value: ${opportunity.potentialValue.toLocaleString()}\n\nAction: ${opportunity.recommendedAction}\n\nThis AI insight would trigger the appropriate action in a production environment.`,
+                                    `🤖 AI Recommendation\n\nOpportunity: ${opportunity.opportunityType.replace("_", " ")}\nConfidence: ${opportunity.confidence}%\nPotential Savings: $${opportunity.potentialSavings.toLocaleString()}\n\nAction: ${opportunity.recommendedAction}\n\nThis AI insight would trigger the appropriate action in a production environment.`,
                                   );
                                 }
 
