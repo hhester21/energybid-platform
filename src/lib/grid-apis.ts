@@ -179,7 +179,7 @@ class CAISOApiService {
     }
   }
 
-  private parseCAISOPrices(data: any): RealTimePrice[] {
+  private parseCAISOPrices(data: CAISOApiResponse): RealTimePrice[] {
     if (!data?.data) return this.getFallbackPrices();
 
     return data.data.map((item: any) => ({
