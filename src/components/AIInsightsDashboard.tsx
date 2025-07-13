@@ -372,7 +372,9 @@ export function AIInsightsDashboard() {
                       <Select
                         value={selectedTimeHorizon}
                         onValueChange={(value: string) =>
-                          setSelectedTimeHorizon(value)
+                          setSelectedTimeHorizon(
+                            value as "1h" | "4h" | "24h" | "7d",
+                          )
                         }
                       >
                         <SelectTrigger className="w-40">
