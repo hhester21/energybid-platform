@@ -52,11 +52,17 @@ export interface EscrowMilestone {
 export interface SmartContractEvent {
   id: string;
   contractId: string;
-  eventType: "created" | "funded" | "delivery_started" | "delivery_completed" | "payment_released" | "disputed";
+  eventType:
+    | "created"
+    | "funded"
+    | "delivery_started"
+    | "delivery_completed"
+    | "payment_released"
+    | "disputed";
   timestamp: Date;
   blockNumber: number;
   transactionHash: string;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 export interface DeploymentConfig {
@@ -71,7 +77,7 @@ export interface ContractTemplate {
   name: string;
   type: string;
   description: string;
-  abi: any[];
+  abi: unknown[];
   bytecode: string;
   parameters: ContractParameter[];
 }
@@ -81,7 +87,7 @@ export interface ContractParameter {
   type: string;
   description: string;
   required: boolean;
-  defaultValue?: any;
+  defaultValue?: unknown;
 }
 
 // Mock blockchain integration
@@ -95,36 +101,52 @@ class BlockchainConnector {
 
   async connect(): Promise<boolean> {
     // Simulate blockchain connection
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     this.connected = true;
     console.log(`🔗 Connected to ${this.network} blockchain`);
     return true;
   }
 
-  async deployContract(template: ContractTemplate, parameters: any): Promise<string> {
+  async deployContract(
+    template: ContractTemplate,
+    parameters: any,
+  ): Promise<string> {
     if (!this.connected) throw new Error("Not connected to blockchain");
 
     // Simulate contract deployment
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
     const address = `0x${Math.random().toString(16).substr(2, 40)}`;
     console.log(`📄 Contract deployed at ${address}`);
     return address;
   }
 
-  async sendTransaction(to: string, data: string, value?: number): Promise<string> {
+  async sendTransaction(
+    to: string,
+    data: string,
+    value?: number,
+  ): Promise<string> {
     if (!this.connected) throw new Error("Not connected to blockchain");
 
     // Simulate transaction
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     const txHash = `0x${Math.random().toString(16).substr(2, 64)}`;
     console.log(`💰 Transaction sent: ${txHash}`);
     return txHash;
   }
 
-  async getContractEvents(address: string, fromBlock = 0): Promise<SmartContractEvent[]> {
+  async getContractEvents(
+    address: string,
+    fromBlock = 0,
+  ): Promise<SmartContractEvent[]> {
     // Simulate event fetching
     const events: SmartContractEvent[] = [];
-    const eventTypes = ["created", "funded", "delivery_started", "delivery_completed", "payment_released"];
+    const eventTypes = [
+      "created",
+      "funded",
+      "delivery_started",
+      "delivery_completed",
+      "payment_released",
+    ];
 
     for (let i = 0; i < 3; i++) {
       events.push({
@@ -134,7 +156,7 @@ class BlockchainConnector {
         timestamp: new Date(Date.now() - i * 60 * 60 * 1000),
         blockNumber: 12345678 + i,
         transactionHash: `0x${Math.random().toString(16).substr(2, 64)}`,
-        data: { amount: 100 + i * 10, price: 0.025 + i * 0.005 }
+        data: { amount: 100 + i * 10, price: 0.025 + i * 0.005 },
       });
     }
 
@@ -156,7 +178,7 @@ export class SmartContractManager {
     gasPrice: 20,
     gasLimit: 500000,
     confirmations: 3,
-    timeout: 300
+    timeout: 300,
   };
 
   constructor(network = "testnet") {
@@ -177,9 +199,8 @@ export class SmartContractManager {
     pricePerMWh: number,
     deliveryStart: Date,
     deliveryEnd: Date,
-    terms: Partial<ContractTerms> = {}
+    terms: Partial<ContractTerms> = {},
   ): Promise<EnergyContract> {
-
     const contract: EnergyContract = {
       id: `contract_${Date.now()}`,
       type: "spot",
@@ -201,8 +222,8 @@ export class SmartContractManager {
         settlementMethod: "automatic",
         disputeResolution: "arbitration",
         carbonCredits: true,
-        ...terms
-      }
+        ...terms,
+      },
     };
 
     // Deploy smart contract
@@ -216,7 +237,7 @@ export class SmartContractManager {
         energyAmount,
         pricePerMWh: Math.round(pricePerMWh * 1000000), // Convert to wei-like units
         deliveryStart: Math.floor(deliveryStart.getTime() / 1000),
-        deliveryEnd: Math.floor(deliveryEnd.getTime() / 1000)
+        deliveryEnd: Math.floor(deliveryEnd.getTime() / 1000),
       });
 
       contract.contractAddress = contractAddress;
@@ -244,10 +265,11 @@ export class SmartContractManager {
     pricePerMWh: number,
     startDate: Date,
     duration: number, // days
-    frequency: "daily" | "weekly" | "monthly"
+    frequency: "daily" | "weekly" | "monthly",
   ): Promise<EnergyContract> {
-
-    const endDate = new Date(startDate.getTime() + duration * 24 * 60 * 60 * 1000);
+    const endDate = new Date(
+      startDate.getTime() + duration * 24 * 60 * 60 * 1000,
+    );
 
     const contract = await this.createEnergyContract(
       buyer,
@@ -259,8 +281,8 @@ export class SmartContractManager {
       {
         autoRenewal: true,
         settlementMethod: "automatic",
-        carbonCredits: true
-      }
+        carbonCredits: true,
+      },
     );
 
     contract.type = "recurring";
@@ -282,7 +304,7 @@ export class SmartContractManager {
       releaseConditions: [
         "Energy delivery confirmed",
         "Quality standards met",
-        "No disputes raised"
+        "No disputes raised",
       ],
       milestones: [
         {
@@ -291,31 +313,31 @@ export class SmartContractManager {
           percentage: 10,
           condition: "Contract becomes active",
           completed: true,
-          completedAt: new Date()
+          completedAt: new Date(),
         },
         {
           id: "milestone_2",
           description: "Delivery start",
           percentage: 30,
           condition: "Energy delivery begins",
-          completed: false
+          completed: false,
         },
         {
           id: "milestone_3",
           description: "50% delivery completed",
           percentage: 30,
           condition: "Half of energy delivered",
-          completed: false
+          completed: false,
         },
         {
           id: "milestone_4",
           description: "Full delivery completed",
           percentage: 30,
           condition: "All energy delivered and verified",
-          completed: false
-        }
+          completed: false,
+        },
       ],
-      status: "funded"
+      status: "funded",
     };
 
     // Deploy escrow contract
@@ -327,7 +349,7 @@ export class SmartContractManager {
         contractId: contract.id,
         totalAmount: Math.round(contract.totalValue * 1000000),
         buyer: contract.buyer,
-        seller: contract.seller
+        seller: contract.seller,
       });
 
       contract.escrowAddress = escrowAddress;
@@ -341,11 +363,14 @@ export class SmartContractManager {
     }
   }
 
-  async releaseMilestone(contractId: string, milestoneId: string): Promise<boolean> {
+  async releaseMilestone(
+    contractId: string,
+    milestoneId: string,
+  ): Promise<boolean> {
     const escrow = this.escrows.get(contractId);
     if (!escrow) throw new Error("Escrow not found");
 
-    const milestone = escrow.milestones.find(m => m.id === milestoneId);
+    const milestone = escrow.milestones.find((m) => m.id === milestoneId);
     if (!milestone) throw new Error("Milestone not found");
 
     if (milestone.completed) return true;
@@ -357,7 +382,7 @@ export class SmartContractManager {
         await this.connector.sendTransaction(
           contract.escrowAddress,
           `releaseMilestone(${milestoneId})`,
-          0
+          0,
         );
       }
 
@@ -365,13 +390,15 @@ export class SmartContractManager {
       milestone.completedAt = new Date();
 
       // Check if all milestones are completed
-      const allCompleted = escrow.milestones.every(m => m.completed);
+      const allCompleted = escrow.milestones.every((m) => m.completed);
       if (allCompleted) {
         escrow.status = "released";
         await this.completeContract(contractId);
       }
 
-      console.log(`💰 Milestone ${milestoneId} released for contract ${contractId}`);
+      console.log(
+        `💰 Milestone ${milestoneId} released for contract ${contractId}`,
+      );
       return true;
     } catch (error) {
       console.error("Failed to release milestone:", error);
@@ -380,7 +407,10 @@ export class SmartContractManager {
   }
 
   // Contract Execution and Settlement
-  async executeDelivery(contractId: string, actualAmount: number): Promise<boolean> {
+  async executeDelivery(
+    contractId: string,
+    actualAmount: number,
+  ): Promise<boolean> {
     const contract = this.contracts.get(contractId);
     if (!contract) throw new Error("Contract not found");
 
@@ -399,7 +429,7 @@ export class SmartContractManager {
         await this.connector.sendTransaction(
           contract.contractAddress,
           `recordDelivery(${Math.round(actualAmount * 1000)})`,
-          0
+          0,
         );
       }
 
@@ -416,7 +446,9 @@ export class SmartContractManager {
         }
       }
 
-      console.log(`⚡ Energy delivery recorded: ${actualAmount} MWh for contract ${contractId}`);
+      console.log(
+        `⚡ Energy delivery recorded: ${actualAmount} MWh for contract ${contractId}`,
+      );
       return true;
     } catch (error) {
       console.error("Failed to execute delivery:", error);
@@ -436,7 +468,7 @@ export class SmartContractManager {
         await this.connector.sendTransaction(
           contract.contractAddress,
           "finalizeContract()",
-          0
+          0,
         );
       }
 
@@ -466,7 +498,7 @@ export class SmartContractManager {
         await this.connector.sendTransaction(
           contract.contractAddress,
           `raiseDispute("${reason}")`,
-          0
+          0,
         );
       }
 
@@ -484,7 +516,10 @@ export class SmartContractManager {
     }
   }
 
-  async resolveDispute(contractId: string, resolution: "buyer" | "seller" | "split"): Promise<boolean> {
+  async resolveDispute(
+    contractId: string,
+    resolution: "buyer" | "seller" | "split",
+  ): Promise<boolean> {
     const contract = this.contracts.get(contractId);
     if (!contract || contract.status !== "disputed") return false;
 
@@ -494,7 +529,7 @@ export class SmartContractManager {
         await this.connector.sendTransaction(
           contract.contractAddress,
           `resolveDispute("${resolution}")`,
-          0
+          0,
         );
       }
 
@@ -506,7 +541,9 @@ export class SmartContractManager {
         escrow.status = "released";
       }
 
-      console.log(`⚖️ Dispute resolved for contract ${contractId}: ${resolution}`);
+      console.log(
+        `⚖️ Dispute resolved for contract ${contractId}: ${resolution}`,
+      );
       return true;
     } catch (error) {
       console.error("Failed to resolve dispute:", error);
@@ -521,7 +558,9 @@ export class SmartContractManager {
 
     try {
       const newStartDate = new Date(originalContract.deliveryEnd);
-      const duration = originalContract.deliveryEnd.getTime() - originalContract.deliveryStart.getTime();
+      const duration =
+        originalContract.deliveryEnd.getTime() -
+        originalContract.deliveryStart.getTime();
       const newEndDate = new Date(newStartDate.getTime() + duration);
 
       const renewedContract = await this.createEnergyContract(
@@ -531,11 +570,13 @@ export class SmartContractManager {
         originalContract.pricePerMWh,
         newStartDate,
         newEndDate,
-        originalContract.terms
+        originalContract.terms,
       );
 
       renewedContract.type = originalContract.type;
-      console.log(`🔄 Contract renewed: ${contractId} -> ${renewedContract.id}`);
+      console.log(
+        `🔄 Contract renewed: ${contractId} -> ${renewedContract.id}`,
+      );
 
       return renewedContract.id;
     } catch (error) {
@@ -555,7 +596,8 @@ export class SmartContractManager {
 
   getUserContracts(userAddress: string): EnergyContract[] {
     return Array.from(this.contracts.values()).filter(
-      contract => contract.buyer === userAddress || contract.seller === userAddress
+      (contract) =>
+        contract.buyer === userAddress || contract.seller === userAddress,
     );
   }
 
@@ -578,10 +620,13 @@ export class SmartContractManager {
   getContractStats() {
     const contracts = Array.from(this.contracts.values());
     const totalValue = contracts.reduce((sum, c) => sum + c.totalValue, 0);
-    const byStatus = contracts.reduce((acc, c) => {
-      acc[c.status] = (acc[c.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const byStatus = contracts.reduce(
+      (acc, c) => {
+        acc[c.status] = (acc[c.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     return {
       totalContracts: contracts.length,
@@ -590,7 +635,7 @@ export class SmartContractManager {
       completedContracts: byStatus.completed || 0,
       disputedContracts: byStatus.disputed || 0,
       averageContractValue: totalValue / contracts.length || 0,
-      totalEnergyTraded: contracts.reduce((sum, c) => sum + c.energyAmount, 0)
+      totalEnergyTraded: contracts.reduce((sum, c) => sum + c.energyAmount, 0),
     };
   }
 
@@ -604,13 +649,43 @@ export class SmartContractManager {
       abi: [], // Simplified for demo
       bytecode: "0x608060405234801561001057600080fd5b50...",
       parameters: [
-        { name: "buyer", type: "address", description: "Buyer wallet address", required: true },
-        { name: "seller", type: "address", description: "Seller wallet address", required: true },
-        { name: "energyAmount", type: "uint256", description: "Energy amount in MWh", required: true },
-        { name: "pricePerMWh", type: "uint256", description: "Price per MWh in wei", required: true },
-        { name: "deliveryStart", type: "uint256", description: "Delivery start timestamp", required: true },
-        { name: "deliveryEnd", type: "uint256", description: "Delivery end timestamp", required: true }
-      ]
+        {
+          name: "buyer",
+          type: "address",
+          description: "Buyer wallet address",
+          required: true,
+        },
+        {
+          name: "seller",
+          type: "address",
+          description: "Seller wallet address",
+          required: true,
+        },
+        {
+          name: "energyAmount",
+          type: "uint256",
+          description: "Energy amount in MWh",
+          required: true,
+        },
+        {
+          name: "pricePerMWh",
+          type: "uint256",
+          description: "Price per MWh in wei",
+          required: true,
+        },
+        {
+          name: "deliveryStart",
+          type: "uint256",
+          description: "Delivery start timestamp",
+          required: true,
+        },
+        {
+          name: "deliveryEnd",
+          type: "uint256",
+          description: "Delivery end timestamp",
+          required: true,
+        },
+      ],
     });
 
     // Energy Escrow Template
@@ -621,11 +696,31 @@ export class SmartContractManager {
       abi: [],
       bytecode: "0x608060405234801561001057600080fd5b50...",
       parameters: [
-        { name: "contractId", type: "string", description: "Associated energy contract ID", required: true },
-        { name: "totalAmount", type: "uint256", description: "Total escrow amount", required: true },
-        { name: "buyer", type: "address", description: "Buyer address", required: true },
-        { name: "seller", type: "address", description: "Seller address", required: true }
-      ]
+        {
+          name: "contractId",
+          type: "string",
+          description: "Associated energy contract ID",
+          required: true,
+        },
+        {
+          name: "totalAmount",
+          type: "uint256",
+          description: "Total escrow amount",
+          required: true,
+        },
+        {
+          name: "buyer",
+          type: "address",
+          description: "Buyer address",
+          required: true,
+        },
+        {
+          name: "seller",
+          type: "address",
+          description: "Seller address",
+          required: true,
+        },
+      ],
     });
 
     // Recurring Energy Contract Template
@@ -636,13 +731,43 @@ export class SmartContractManager {
       abi: [],
       bytecode: "0x608060405234801561001057600080fd5b50...",
       parameters: [
-        { name: "buyer", type: "address", description: "Buyer wallet address", required: true },
-        { name: "seller", type: "address", description: "Seller wallet address", required: true },
-        { name: "energyAmount", type: "uint256", description: "Energy amount per delivery", required: true },
-        { name: "pricePerMWh", type: "uint256", description: "Price per MWh", required: true },
-        { name: "frequency", type: "uint256", description: "Delivery frequency in seconds", required: true },
-        { name: "duration", type: "uint256", description: "Contract duration in seconds", required: true }
-      ]
+        {
+          name: "buyer",
+          type: "address",
+          description: "Buyer wallet address",
+          required: true,
+        },
+        {
+          name: "seller",
+          type: "address",
+          description: "Seller wallet address",
+          required: true,
+        },
+        {
+          name: "energyAmount",
+          type: "uint256",
+          description: "Energy amount per delivery",
+          required: true,
+        },
+        {
+          name: "pricePerMWh",
+          type: "uint256",
+          description: "Price per MWh",
+          required: true,
+        },
+        {
+          name: "frequency",
+          type: "uint256",
+          description: "Delivery frequency in seconds",
+          required: true,
+        },
+        {
+          name: "duration",
+          type: "uint256",
+          description: "Contract duration in seconds",
+          required: true,
+        },
+      ],
     });
   }
 
@@ -655,7 +780,7 @@ export class SmartContractManager {
         buyer: "Tesla Supercharger Network",
         seller: "Mojave Solar Farm",
         energyAmount: 25.5,
-        pricePerMWh: 28.50,
+        pricePerMWh: 28.5,
         totalValue: 726.75,
         deliveryStart: new Date(),
         deliveryEnd: new Date(Date.now() + 2 * 60 * 60 * 1000),
@@ -670,8 +795,8 @@ export class SmartContractManager {
           deliveryTolerance: 2,
           settlementMethod: "automatic",
           disputeResolution: "arbitration",
-          carbonCredits: true
-        }
+          carbonCredits: true,
+        },
       },
       {
         id: "demo_contract_2",
@@ -679,14 +804,15 @@ export class SmartContractManager {
         buyer: "Google AI Center",
         seller: "Roscoe Wind Farm",
         energyAmount: 15.0,
-        pricePerMWh: 22.00,
-        totalValue: 330.00,
+        pricePerMWh: 22.0,
+        totalValue: 330.0,
         deliveryStart: new Date(Date.now() - 24 * 60 * 60 * 1000),
         deliveryEnd: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000),
         status: "completed",
         blockchain: "polygon",
         contractAddress: "0xabcdef1234567890abcdef1234567890abcdef12",
-        transactionHash: "0x9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba",
+        transactionHash:
+          "0x9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba",
         createdAt: new Date(Date.now() - 48 * 60 * 60 * 1000),
         terms: {
           autoRenewal: true,
@@ -695,9 +821,9 @@ export class SmartContractManager {
           deliveryTolerance: 5,
           settlementMethod: "automatic",
           disputeResolution: "dao",
-          carbonCredits: true
-        }
-      }
+          carbonCredits: true,
+        },
+      },
     ];
 
     for (const contract of demoContracts) {
@@ -718,17 +844,17 @@ export class SmartContractManager {
           percentage: 20,
           condition: "Contract becomes active",
           completed: true,
-          completedAt: new Date(Date.now() - 30 * 60 * 1000)
+          completedAt: new Date(Date.now() - 30 * 60 * 1000),
         },
         {
           id: "milestone_2",
           description: "Delivery in progress",
           percentage: 80,
           condition: "Energy delivery verified",
-          completed: false
-        }
+          completed: false,
+        },
       ],
-      status: "funded"
+      status: "funded",
     });
 
     console.log("📋 Demo contracts loaded");
