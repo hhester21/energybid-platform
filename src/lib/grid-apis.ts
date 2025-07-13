@@ -208,8 +208,8 @@ class CAISOApiService {
     if (!data?.data) return [];
 
     return data.data
-      .filter((item: any) => Number.parseFloat(item.CURTAILMENT_MW) > 0)
-      .map((item: any) => ({
+      .filter((item) => Number.parseFloat(item.CURTAILMENT_MW || "0") > 0)
+      .map((item) => ({
         timestamp: new Date(item.INTERVALSTARTTIME_GMT),
         resourceType: item.RESOURCE_TYPE || "Renewable",
         curtailedAmount: Number.parseFloat(item.CURTAILMENT_MW) || 0,
