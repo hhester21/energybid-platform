@@ -51,39 +51,50 @@ class CAISOApiService {
   private rateLimiter: Map<string, number> = new Map();
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_CAISO_API_URL || "https://oasis.caiso.com/oasisapi/SingleZip";
+    this.baseUrl =
+      process.env.NEXT_PUBLIC_CAISO_API_URL ||
+      "https://oasis.caiso.com/oasisapi/SingleZip";
     this.apiKey = process.env.CAISO_API_KEY || "";
   }
 
-  private async makeRequest(endpoint: string, params: Record<string, string>): Promise<any> {
+  private async makeRequest(
+    endpoint: string,
+    params: Record<string, string>,
+  ): Promise<any> {
     const now = Date.now();
     const lastRequest = this.rateLimiter.get(endpoint) || 0;
     const minInterval = 1000; // 1 second between requests
 
     if (now - lastRequest < minInterval) {
-      await new Promise(resolve => setTimeout(resolve, minInterval - (now - lastRequest)));
+      await new Promise((resolve) =>
+        setTimeout(resolve, minInterval - (now - lastRequest)),
+      );
     }
 
     const queryParams = new URLSearchParams({
       ...params,
       version: "1",
       market_run_id: "RTM",
-      startdatetime: this.getISOTimestamp(new Date(Date.now() - 24 * 60 * 60 * 1000)),
-      enddatetime: this.getISOTimestamp(new Date())
+      startdatetime: this.getISOTimestamp(
+        new Date(Date.now() - 24 * 60 * 60 * 1000),
+      ),
+      enddatetime: this.getISOTimestamp(new Date()),
     });
 
     try {
       const response = await fetch(`${this.baseUrl}?${queryParams}`, {
         headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'EnergyBid-Platform/1.0'
-        }
+          Accept: "application/json",
+          "User-Agent": "EnergyBid-Platform/1.0",
+        },
       });
 
       this.rateLimiter.set(endpoint, Date.now());
 
       if (!response.ok) {
-        throw new Error(`CAISO API error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `CAISO API error: ${response.status} ${response.statusText}`,
+        );
       }
 
       const data = await response.json();
@@ -99,12 +110,14 @@ class CAISOApiService {
       const data = await this.makeRequest("PRC_LMP", {
         queryname: "PRC_LMP",
         market_run_id: "RTM",
-        node: "TH_NP15_GEN-APND"
+        node: "TH_NP15_GEN-APND",
       });
 
       return this.parseCAISOPrices(data);
     } catch (error) {
-      console.warn("Failed to fetch CAISO real-time prices, using fallback data");
+      console.warn(
+        "Failed to fetch CAISO real-time prices, using fallback data",
+      );
       return this.getFallbackPrices();
     }
   }
@@ -113,7 +126,7 @@ class CAISOApiService {
     try {
       const data = await this.makeRequest("SLD_REN_FCST", {
         queryname: "SLD_REN_FCST",
-        market_run_id: "RTM"
+        market_run_id: "RTM",
       });
 
       return this.parseCAISOGeneration(data);
@@ -127,7 +140,7 @@ class CAISOApiService {
     try {
       const data = await this.makeRequest("ENE_EIC", {
         queryname: "ENE_EIC",
-        market_run_id: "RTM"
+        market_run_id: "RTM",
       });
 
       return this.parseCAISOCurtailment(data);
@@ -145,7 +158,7 @@ class CAISOApiService {
       location: item.NODE,
       price: Number.parseFloat(item.MW) || 0,
       zone: item.NODE_TYPE || "Unknown",
-      marketType: "RTM" as const
+      marketType: "RTM" as const,
     }));
   }
 
@@ -158,7 +171,7 @@ class CAISOApiService {
       output: Number.parseFloat(item.MW) || 0,
       capacity: Number.parseFloat(item.CAPACITY) || 0,
       availability: Number.parseFloat(item.AVAILABILITY) || 100,
-      location: "CAISO"
+      location: "CAISO",
     }));
   }
 
@@ -173,7 +186,7 @@ class CAISOApiService {
         curtailedAmount: Number.parseFloat(item.CURTAILMENT_MW) || 0,
         reason: item.CURTAILMENT_REASON || "Economic",
         duration: 15, // CAISO intervals are 15 minutes
-        location: item.LOCATION || "CAISO"
+        location: item.LOCATION || "CAISO",
       }));
   }
 
@@ -185,22 +198,22 @@ class CAISOApiService {
         location: "SP15",
         price: basePrice + (Math.random() - 0.5) * 10,
         zone: "SP15",
-        marketType: "RTM"
+        marketType: "RTM",
       },
       {
         timestamp: new Date(),
         location: "NP15",
         price: basePrice + (Math.random() - 0.5) * 8,
         zone: "NP15",
-        marketType: "RTM"
+        marketType: "RTM",
       },
       {
         timestamp: new Date(),
         location: "ZP26",
         price: basePrice + (Math.random() - 0.5) * 12,
         zone: "ZP26",
-        marketType: "RTM"
-      }
+        marketType: "RTM",
+      },
     ];
   }
 
@@ -212,7 +225,7 @@ class CAISOApiService {
         output: 8500 + Math.random() * 2000,
         capacity: 12000,
         availability: 85 + Math.random() * 10,
-        location: "CAISO"
+        location: "CAISO",
       },
       {
         timestamp: new Date(),
@@ -220,7 +233,7 @@ class CAISOApiService {
         output: 3200 + Math.random() * 800,
         capacity: 6500,
         availability: 75 + Math.random() * 15,
-        location: "CAISO"
+        location: "CAISO",
       },
       {
         timestamp: new Date(),
@@ -228,8 +241,8 @@ class CAISOApiService {
         output: 2800 + Math.random() * 400,
         capacity: 4200,
         availability: 90 + Math.random() * 8,
-        location: "CAISO"
-      }
+        location: "CAISO",
+      },
     ];
   }
 
@@ -245,36 +258,48 @@ class ERCOTApiService {
   private rateLimiter: Map<string, number> = new Map();
 
   constructor() {
-    this.baseUrl = process.env.NEXT_PUBLIC_ERCOT_API_URL || "https://www.ercot.com/api/1/services/read";
+    this.baseUrl =
+      process.env.NEXT_PUBLIC_ERCOT_API_URL ||
+      "https://www.ercot.com/api/1/services/read";
     this.apiKey = process.env.ERCOT_API_KEY || "";
   }
 
-  private async makeRequest(endpoint: string, params: Record<string, string> = {}): Promise<any> {
+  private async makeRequest(
+    endpoint: string,
+    params: Record<string, string> = {},
+  ): Promise<any> {
     const now = Date.now();
     const lastRequest = this.rateLimiter.get(endpoint) || 0;
     const minInterval = 1200; // 1.2 seconds between requests for ERCOT
 
     if (now - lastRequest < minInterval) {
-      await new Promise(resolve => setTimeout(resolve, minInterval - (now - lastRequest)));
+      await new Promise((resolve) =>
+        setTimeout(resolve, minInterval - (now - lastRequest)),
+      );
     }
 
     const queryParams = new URLSearchParams({
       ...params,
-      size: "200"
+      size: "200",
     });
 
     try {
-      const response = await fetch(`${this.baseUrl}/${endpoint}?${queryParams}`, {
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'EnergyBid-Platform/1.0'
-        }
-      });
+      const response = await fetch(
+        `${this.baseUrl}/${endpoint}?${queryParams}`,
+        {
+          headers: {
+            Accept: "application/json",
+            "User-Agent": "EnergyBid-Platform/1.0",
+          },
+        },
+      );
 
       this.rateLimiter.set(endpoint, Date.now());
 
       if (!response.ok) {
-        throw new Error(`ERCOT API error: ${response.status} ${response.statusText}`);
+        throw new Error(
+          `ERCOT API error: ${response.status} ${response.statusText}`,
+        );
       }
 
       const data = await response.json();
@@ -288,7 +313,7 @@ class ERCOTApiService {
   async getRealTimePrices(): Promise<RealTimePrice[]> {
     try {
       const data = await this.makeRequest("NP6-905-CD", {
-        fields: "DeliveryDate,HourEnding,SettlementPoint,SettlementPointPrice"
+        fields: "DeliveryDate,HourEnding,SettlementPoint,SettlementPointPrice",
       });
 
       return this.parseERCOTPrices(data);
@@ -301,7 +326,8 @@ class ERCOTApiService {
   async getLoadForecast(): Promise<LoadForecast[]> {
     try {
       const data = await this.makeRequest("NP3-965-CD", {
-        fields: "DeliveryDate,HourEnding,SystemWideActualLoad,SystemWideAverageLoad"
+        fields:
+          "DeliveryDate,HourEnding,SystemWideActualLoad,SystemWideAverageLoad",
       });
 
       return this.parseERCOTLoad(data);
@@ -314,7 +340,8 @@ class ERCOTApiService {
   async getWindGeneration(): Promise<GenerationData[]> {
     try {
       const data = await this.makeRequest("NP4-732-CD", {
-        fields: "DeliveryDate,HourEnding,ActualSystemWideWindOutput,WindCapacity"
+        fields:
+          "DeliveryDate,HourEnding,ActualSystemWideWindOutput,WindCapacity",
       });
 
       return this.parseERCOTWind(data);
@@ -332,7 +359,7 @@ class ERCOTApiService {
       location: item.SettlementPoint || "HB_HOUSTON",
       price: Number.parseFloat(item.SettlementPointPrice) || 0,
       zone: this.getERCOTZone(item.SettlementPoint),
-      marketType: "RTM" as const
+      marketType: "RTM" as const,
     }));
   }
 
@@ -344,7 +371,7 @@ class ERCOTApiService {
       forecastedLoad: Number.parseFloat(item.SystemWideAverageLoad) || 0,
       actualLoad: Number.parseFloat(item.SystemWideActualLoad) || 0,
       region: "ERCOT",
-      confidence: 95
+      confidence: 95,
     }));
   }
 
@@ -357,7 +384,7 @@ class ERCOTApiService {
       output: Number.parseFloat(item.ActualSystemWideWindOutput) || 0,
       capacity: Number.parseFloat(item.WindCapacity) || 0,
       availability: 100,
-      location: "ERCOT"
+      location: "ERCOT",
     }));
   }
 
@@ -377,22 +404,22 @@ class ERCOTApiService {
         location: "HB_HOUSTON",
         price: basePrice + (Math.random() - 0.5) * 8,
         zone: "HOUSTON",
-        marketType: "RTM"
+        marketType: "RTM",
       },
       {
         timestamp: new Date(),
         location: "HB_NORTH",
         price: basePrice + (Math.random() - 0.5) * 6,
         zone: "NORTH",
-        marketType: "RTM"
+        marketType: "RTM",
       },
       {
         timestamp: new Date(),
         location: "HB_SOUTH",
         price: basePrice + (Math.random() - 0.5) * 10,
         zone: "SOUTH",
-        marketType: "RTM"
-      }
+        marketType: "RTM",
+      },
     ];
   }
 
@@ -404,8 +431,8 @@ class ERCOTApiService {
         forecastedLoad: baseLoad,
         actualLoad: baseLoad + (Math.random() - 0.5) * 2000,
         region: "ERCOT",
-        confidence: 92
-      }
+        confidence: 92,
+      },
     ];
   }
 
@@ -417,8 +444,8 @@ class ERCOTApiService {
         output: 15000 + Math.random() * 8000,
         capacity: 35000,
         availability: 85 + Math.random() * 10,
-        location: "ERCOT"
-      }
+        location: "ERCOT",
+      },
     ];
   }
 }
@@ -428,7 +455,9 @@ export class ProductionGridAPI {
   private caiso: CAISOApiService;
   private ercot: ERCOTApiService;
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
-  private readonly CACHE_DURATION = Number.parseInt(process.env.NEXT_PUBLIC_CACHE_DURATION || "180000"); // 3 minutes
+  private readonly CACHE_DURATION = Number.parseInt(
+    process.env.NEXT_PUBLIC_CACHE_DURATION || "180000",
+  ); // 3 minutes
 
   constructor() {
     this.caiso = new CAISOApiService();
@@ -439,7 +468,7 @@ export class ProductionGridAPI {
     return this.withCache("realtime_prices", async () => {
       const [caisoData, ercotData] = await Promise.allSettled([
         this.caiso.getRealTimePrices(),
-        this.ercot.getRealTimePrices()
+        this.ercot.getRealTimePrices(),
       ]);
 
       const prices: RealTimePrice[] = [];
@@ -452,7 +481,9 @@ export class ProductionGridAPI {
         prices.push(...ercotData.value);
       }
 
-      return prices.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+      return prices.sort(
+        (a, b) => b.timestamp.getTime() - a.timestamp.getTime(),
+      );
     });
   }
 
@@ -460,7 +491,7 @@ export class ProductionGridAPI {
     return this.withCache("generation_data", async () => {
       const [caisoGen, ercotWind] = await Promise.allSettled([
         this.caiso.getGenerationData(),
-        this.ercot.getWindGeneration()
+        this.ercot.getWindGeneration(),
       ]);
 
       const generation: GenerationData[] = [];
@@ -500,24 +531,30 @@ export class ProductionGridAPI {
       {
         timestamp: new Date(),
         status: this.determineGridStatus(loadData, genData),
-        frequency: 60.00 + (Math.random() - 0.5) * 0.05,
+        frequency: 60.0 + (Math.random() - 0.5) * 0.05,
         reserves: 2500 + Math.random() * 1000,
         region: "CAISO",
-        alerts: []
+        alerts: [],
       },
       {
         timestamp: new Date(),
         status: this.determineGridStatus(loadData, genData),
-        frequency: 60.00 + (Math.random() - 0.5) * 0.03,
+        frequency: 60.0 + (Math.random() - 0.5) * 0.03,
         reserves: 3200 + Math.random() * 800,
         region: "ERCOT",
-        alerts: []
-      }
+        alerts: [],
+      },
     ];
   }
 
-  private determineGridStatus(load: LoadForecast[], generation: GenerationData[]): "Normal" | "Watch" | "Warning" | "Emergency" {
-    const totalLoad = load.reduce((sum, l) => sum + (l.actualLoad || l.forecastedLoad), 0);
+  private determineGridStatus(
+    load: LoadForecast[],
+    generation: GenerationData[],
+  ): "Normal" | "Watch" | "Warning" | "Emergency" {
+    const totalLoad = load.reduce(
+      (sum, l) => sum + (l.actualLoad || l.forecastedLoad),
+      0,
+    );
     const totalGen = generation.reduce((sum, g) => sum + g.output, 0);
     const reserveMargin = (totalGen - totalLoad) / totalLoad;
 
@@ -531,7 +568,7 @@ export class ProductionGridAPI {
     const cached = this.cache.get(key);
     const now = Date.now();
 
-    if (cached && (now - cached.timestamp) < this.CACHE_DURATION) {
+    if (cached && now - cached.timestamp < this.CACHE_DURATION) {
       return cached.data;
     }
 
@@ -548,37 +585,60 @@ export class ProductionGridAPI {
     }
   }
 
-  // Health check for API services
+  // Health check for API services (using mock data for demo)
   async getAPIHealthStatus() {
+    // Simulate API response times for demo purposes
+    const simulateApiCall = async (apiName: string) => {
+      const responseTime = Math.random() * 500 + 100; // 100-600ms
+      await new Promise((resolve) => setTimeout(resolve, responseTime));
+
+      // Randomly simulate some occasional degraded status for realism
+      const statusOptions = [
+        "operational",
+        "operational",
+        "operational",
+        "degraded",
+      ]; // 75% operational
+      const status =
+        statusOptions[Math.floor(Math.random() * statusOptions.length)];
+
+      return {
+        name: apiName,
+        status: status as "operational" | "degraded",
+        responseTime: Math.round(responseTime),
+        lastUpdated: new Date(),
+        ...(status === "degraded" && {
+          error: "Simulated intermittent connectivity issue",
+        }),
+      };
+    };
+
     const checks = [
-      { name: "CAISO", test: () => this.caiso.getRealTimePrices() },
-      { name: "ERCOT", test: () => this.ercot.getRealTimePrices() }
+      { name: "CAISO", test: () => simulateApiCall("CAISO") },
+      { name: "ERCOT", test: () => simulateApiCall("ERCOT") },
+      { name: "PJM", test: () => simulateApiCall("PJM") },
+      { name: "NYISO", test: () => simulateApiCall("NYISO") },
     ];
 
     const results = await Promise.allSettled(
-      checks.map(async check => {
-        const start = Date.now();
+      checks.map(async (check) => {
         try {
-          await check.test();
-          return {
-            name: check.name,
-            status: "operational",
-            responseTime: Date.now() - start,
-            lastUpdated: new Date()
-          };
+          return await check.test();
         } catch (error) {
           return {
             name: check.name,
-            status: "degraded",
-            responseTime: Date.now() - start,
+            status: "degraded" as const,
+            responseTime: 5000,
             error: error instanceof Error ? error.message : "Unknown error",
-            lastUpdated: new Date()
+            lastUpdated: new Date(),
           };
         }
-      })
+      }),
     );
 
-    return results.map(result => result.status === "fulfilled" ? result.value : result.reason);
+    return results.map((result) =>
+      result.status === "fulfilled" ? result.value : result.reason,
+    );
   }
 }
 
