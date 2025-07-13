@@ -296,7 +296,7 @@ class ERCOTApiService {
   private async makeRequest(
     endpoint: string,
     params: Record<string, string> = {},
-  ): Promise<any> {
+  ): Promise<ERCOTApiResponse> {
     const now = Date.now();
     const lastRequest = this.rateLimiter.get(endpoint) || 0;
     const minInterval = 1200; // 1.2 seconds between requests for ERCOT
