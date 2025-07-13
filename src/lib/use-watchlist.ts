@@ -138,7 +138,7 @@ export function useWatchlist() {
           // Update watched blocks with new market data
           setWatchedBlocks((prev) =>
             prev.map((watched) => {
-              const updatedBlock = marketData.energyBlocks.find(
+              const updatedBlock = marketData.energyBlocks?.find(
                 (block: EnergyBlock) => block.id === watched.energyBlock.id,
               );
 
