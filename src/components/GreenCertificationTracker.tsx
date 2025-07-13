@@ -372,7 +372,7 @@ Certificate ID: ${selectedCert.id}
 Type: ${selectedCert.type}
 Amount: ${selectedCert.amount} MWh
 Date: ${selectedCert.issueDate.toLocaleDateString()}
-Verification: ${selectedCert.verificationStatus}
+Status: ${selectedCert.status}
 
 This certificate represents verified renewable energy consumption
 and carbon footprint reduction through the EnergyBid platform.
