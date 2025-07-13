@@ -109,7 +109,7 @@ class BlockchainConnector {
 
   async deployContract(
     template: ContractTemplate,
-    parameters: any,
+    parameters: Record<string, unknown>,
   ): Promise<string> {
     if (!this.connected) throw new Error("Not connected to blockchain");
 
