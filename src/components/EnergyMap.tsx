@@ -563,17 +563,15 @@ export function EnergyMap() {
 
                 const emoji = getMarkerEmoji(block);
                 const color = getMarkerColor(block);
+                const customIcon = createCustomIcon(emoji, color);
+
+                if (!customIcon) return null;
 
                 return (
                   <Marker
                     key={block.id}
                     position={[block.coordinates.lat, block.coordinates.lng]}
-                    icon={L?.divIcon({
-                      html: `<div style="background: ${color}; border: 2px solid #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 14px;">${emoji}</div>`,
-                      className: "custom-div-icon",
-                      iconSize: [30, 30],
-                      iconAnchor: [15, 15],
-                    })}
+                    icon={customIcon}
                     eventHandlers={{
                       click: () =>
                         !isCreatingListing && setSelectedBlock(block),
