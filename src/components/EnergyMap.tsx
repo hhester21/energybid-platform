@@ -185,6 +185,20 @@ export function EnergyMap() {
     setIsClient(true);
     fetchEnergyData();
 
+    // Setup Leaflet icons for client-side only
+    if (typeof window !== "undefined") {
+      import("leaflet").then((L) => {
+        // Fix Leaflet default markers
+        delete (L.Icon.Default.prototype as any)._getIconUrl;
+        L.Icon.Default.mergeOptions({
+          iconUrl:
+            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEyIDJDOC4xIDIgNSA1LjEgNSA5YzAgNS4yIDcgMTMgNyAxM3M3LTcuOCA3LTEzYzAtMy45LTMuMS03LTctN3oiIGZpbGw9IiMzQjgyRjYiLz4KPGNpcmNsZSBjeD0iMTIiIGN5PSI5IiByPSIyLjUiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=",
+          shadowUrl:
+            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGVsbGlwc2UgY3g9IjIwIiBjeT0iMzgiIHJ4PSIxNSIgcnk9IjIiIGZpbGw9InJnYmEoMCwwLDAsMC4yKSIvPgo8L3N2Zz4K",
+        });
+      });
+    }
+
     // Request notification permissions for alerts
     if (
       typeof window !== "undefined" &&
