@@ -276,7 +276,7 @@ class CAISOApiService {
   }
 
   private getISOTimestamp(date: Date): string {
-    return date.toISOString().slice(0, 19) + "Z";
+    return `${date.toISOString().slice(0, 19)}Z`;
   }
 }
 
