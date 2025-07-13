@@ -1,17 +1,36 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import {
   User,
   Settings,
@@ -34,7 +53,7 @@ import {
   Camera,
   Edit3,
   Save,
-  X
+  X,
 } from "lucide-react";
 import { useAuth, hasPermission } from "@/lib/auth-context";
 
@@ -123,7 +142,7 @@ export function AccountSettings() {
     website: "https://company.com",
     timezone: "America/Los_Angeles",
     language: "en-US",
-    avatar: user?.avatar || ""
+    avatar: user?.avatar || "",
   });
 
   // Notifications state
@@ -134,38 +153,54 @@ export function AccountSettings() {
       contractNotifications: true,
       marketInsights: false,
       systemUpdates: true,
-      weeklyReports: true
+      weeklyReports: true,
     },
     sms: {
       urgentAlerts: true,
       bidWins: true,
-      contractDeadlines: true
+      contractDeadlines: true,
     },
     browser: {
       realTimeUpdates: true,
       priceChanges: true,
-      newOpportunities: false
+      newOpportunities: false,
     },
-    frequency: "immediate"
+    frequency: "immediate",
   });
 
   // Billing state
   const [billing, setBilling] = useState<BillingInfo>({
-    plan: user?.tier === "premium" ? "professional" : user?.tier === "enterprise" ? "enterprise" : "starter",
+    plan:
+      user?.tier === "Premium"
+        ? "professional"
+        : user?.tier === "Enterprise"
+          ? "enterprise"
+          : "starter",
     billingCycle: "monthly",
     nextBilling: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     usage: {
       trades: 156,
       apiCalls: 8420,
       dataStorage: 2.4,
-      maxTrades: user?.tier === "enterprise" ? 10000 : user?.tier === "premium" ? 1000 : 100,
-      maxApiCalls: user?.tier === "enterprise" ? 100000 : user?.tier === "premium" ? 10000 : 1000,
-      maxStorage: user?.tier === "enterprise" ? 100 : user?.tier === "premium" ? 10 : 1
+      maxTrades:
+        user?.tier === "Enterprise"
+          ? 10000
+          : user?.tier === "Premium"
+            ? 1000
+            : 100,
+      maxApiCalls:
+        user?.tier === "Enterprise"
+          ? 100000
+          : user?.tier === "Premium"
+            ? 10000
+            : 1000,
+      maxStorage:
+        user?.tier === "Enterprise" ? 100 : user?.tier === "Premium" ? 10 : 1,
     },
     paymentMethod: {
       type: "credit_card",
       last4: "4567",
-      expiryDate: "12/26"
+      expiryDate: "12/26",
     },
     invoices: [
       {
@@ -173,16 +208,16 @@ export function AccountSettings() {
         date: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
         amount: 299,
         status: "paid",
-        downloadUrl: "#"
+        downloadUrl: "#",
       },
       {
         id: "INV-2024-002",
         date: new Date(),
         amount: 299,
         status: "pending",
-        downloadUrl: "#"
-      }
-    ]
+        downloadUrl: "#",
+      },
+    ],
   });
 
   // Security state
@@ -195,8 +230,8 @@ export function AccountSettings() {
         key: "eb_live_sk_1234567890abcdef",
         permissions: ["read:energy_data", "write:bids"],
         lastUsed: new Date(Date.now() - 2 * 60 * 60 * 1000),
-        created: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
-      }
+        created: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      },
     ],
     loginHistory: [
       {
@@ -204,16 +239,16 @@ export function AccountSettings() {
         location: "San Francisco, CA",
         ip: "192.168.1.100",
         device: "Chrome on macOS",
-        success: true
+        success: true,
       },
       {
         date: new Date(Date.now() - 24 * 60 * 60 * 1000),
         location: "San Francisco, CA",
         ip: "192.168.1.100",
         device: "Safari on iPhone",
-        success: true
-      }
-    ]
+        success: true,
+      },
+    ],
   });
 
   const handleSaveProfile = () => {
@@ -222,13 +257,20 @@ export function AccountSettings() {
     console.log("Profile saved:", profile);
   };
 
-  const handleNotificationChange = (category: keyof NotificationPreferences, setting: string, value: boolean | string) => {
-    setNotifications(prev => ({
+  const handleNotificationChange = (
+    category: keyof NotificationPreferences,
+    setting: string,
+    value: boolean | string,
+  ) => {
+    setNotifications((prev) => ({
       ...prev,
-      [category]: typeof prev[category] === 'object' ? {
-        ...prev[category],
-        [setting]: value
-      } : value
+      [category]:
+        typeof prev[category] === "object"
+          ? {
+              ...prev[category],
+              [setting]: value,
+            }
+          : value,
     }));
   };
 
@@ -239,27 +281,50 @@ export function AccountSettings() {
       key: `eb_live_sk_${Math.random().toString(36).substring(2, 15)}`,
       permissions: ["read:energy_data"],
       lastUsed: new Date(),
-      created: new Date()
+      created: new Date(),
     };
-    setSecurity(prev => ({
+    setSecurity((prev) => ({
       ...prev,
-      apiKeys: [...prev.apiKeys, newKey]
+      apiKeys: [...prev.apiKeys, newKey],
     }));
   };
 
   const handleDeleteApiKey = (keyId: string) => {
-    setSecurity(prev => ({
+    setSecurity((prev) => ({
       ...prev,
-      apiKeys: prev.apiKeys.filter(key => key.id !== keyId)
+      apiKeys: prev.apiKeys.filter((key) => key.id !== keyId),
     }));
   };
 
   const getPlanFeatures = (plan: string) => {
     const features = {
-      starter: ["100 trades/month", "1,000 API calls", "1GB storage", "Email support"],
-      professional: ["1,000 trades/month", "10,000 API calls", "10GB storage", "Priority support", "Advanced analytics"],
-      enterprise: ["Unlimited trades", "100,000 API calls", "100GB storage", "24/7 phone support", "Custom integrations", "Dedicated account manager"],
-      grid_operator: ["Unlimited grid operations", "Real-time monitoring", "Regulatory reporting", "Priority infrastructure"]
+      starter: [
+        "100 trades/month",
+        "1,000 API calls",
+        "1GB storage",
+        "Email support",
+      ],
+      professional: [
+        "1,000 trades/month",
+        "10,000 API calls",
+        "10GB storage",
+        "Priority support",
+        "Advanced analytics",
+      ],
+      enterprise: [
+        "Unlimited trades",
+        "100,000 API calls",
+        "100GB storage",
+        "24/7 phone support",
+        "Custom integrations",
+        "Dedicated account manager",
+      ],
+      grid_operator: [
+        "Unlimited grid operations",
+        "Real-time monitoring",
+        "Regulatory reporting",
+        "Priority infrastructure",
+      ],
     };
     return features[plan as keyof typeof features] || [];
   };
@@ -270,7 +335,9 @@ export function AccountSettings() {
         <CardContent className="p-8 text-center">
           <User className="h-16 w-16 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-semibold mb-2">Account Settings</h3>
-          <p className="text-gray-500">Sign in to manage your account settings and preferences.</p>
+          <p className="text-gray-500">
+            Sign in to manage your account settings and preferences.
+          </p>
         </CardContent>
       </Card>
     );
@@ -285,10 +352,13 @@ export function AccountSettings() {
             <Settings className="h-6 w-6 text-blue-600" />
             <span>Account Settings</span>
           </h2>
-          <p className="text-gray-600">Manage your profile, notifications, billing, and security settings</p>
+          <p className="text-gray-600">
+            Manage your profile, notifications, billing, and security settings
+          </p>
         </div>
         <Badge variant="outline" className="text-blue-600 border-blue-300">
-          {user.userType.charAt(0).toUpperCase() + user.userType.slice(1)} Account
+          {user.userType.charAt(0).toUpperCase() + user.userType.slice(1)}{" "}
+          Account
         </Badge>
       </div>
 
@@ -299,7 +369,10 @@ export function AccountSettings() {
             <User className="h-4 w-4" />
             <span>Profile</span>
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="flex items-center space-x-2">
+          <TabsTrigger
+            value="notifications"
+            className="flex items-center space-x-2"
+          >
             <Bell className="h-4 w-4" />
             <span>Notifications</span>
           </TabsTrigger>
@@ -324,9 +397,15 @@ export function AccountSettings() {
                     <Button
                       size="sm"
                       variant={isEditing ? "destructive" : "outline"}
-                      onClick={() => isEditing ? setIsEditing(false) : setIsEditing(true)}
+                      onClick={() =>
+                        isEditing ? setIsEditing(false) : setIsEditing(true)
+                      }
                     >
-                      {isEditing ? <X className="h-4 w-4 mr-2" /> : <Edit3 className="h-4 w-4 mr-2" />}
+                      {isEditing ? (
+                        <X className="h-4 w-4 mr-2" />
+                      ) : (
+                        <Edit3 className="h-4 w-4 mr-2" />
+                      )}
                       {isEditing ? "Cancel" : "Edit"}
                     </Button>
                   </div>
@@ -341,7 +420,12 @@ export function AccountSettings() {
                       <Input
                         id="firstName"
                         value={profile.firstName}
-                        onChange={(e) => setProfile(prev => ({ ...prev, firstName: e.target.value }))}
+                        onChange={(e) =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            firstName: e.target.value,
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </div>
@@ -350,7 +434,12 @@ export function AccountSettings() {
                       <Input
                         id="lastName"
                         value={profile.lastName}
-                        onChange={(e) => setProfile(prev => ({ ...prev, lastName: e.target.value }))}
+                        onChange={(e) =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            lastName: e.target.value,
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </div>
@@ -363,7 +452,12 @@ export function AccountSettings() {
                         id="email"
                         type="email"
                         value={profile.email}
-                        onChange={(e) => setProfile(prev => ({ ...prev, email: e.target.value }))}
+                        onChange={(e) =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            email: e.target.value,
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </div>
@@ -372,7 +466,12 @@ export function AccountSettings() {
                       <Input
                         id="phone"
                         value={profile.phone}
-                        onChange={(e) => setProfile(prev => ({ ...prev, phone: e.target.value }))}
+                        onChange={(e) =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            phone: e.target.value,
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </div>
@@ -384,7 +483,12 @@ export function AccountSettings() {
                       <Input
                         id="company"
                         value={profile.company}
-                        onChange={(e) => setProfile(prev => ({ ...prev, company: e.target.value }))}
+                        onChange={(e) =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            company: e.target.value,
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </div>
@@ -393,7 +497,12 @@ export function AccountSettings() {
                       <Input
                         id="jobTitle"
                         value={profile.jobTitle}
-                        onChange={(e) => setProfile(prev => ({ ...prev, jobTitle: e.target.value }))}
+                        onChange={(e) =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            jobTitle: e.target.value,
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </div>
@@ -404,7 +513,12 @@ export function AccountSettings() {
                     <Textarea
                       id="address"
                       value={profile.address}
-                      onChange={(e) => setProfile(prev => ({ ...prev, address: e.target.value }))}
+                      onChange={(e) =>
+                        setProfile((prev) => ({
+                          ...prev,
+                          address: e.target.value,
+                        }))
+                      }
                       disabled={!isEditing}
                       rows={2}
                     />
@@ -416,21 +530,40 @@ export function AccountSettings() {
                       <Input
                         id="website"
                         value={profile.website}
-                        onChange={(e) => setProfile(prev => ({ ...prev, website: e.target.value }))}
+                        onChange={(e) =>
+                          setProfile((prev) => ({
+                            ...prev,
+                            website: e.target.value,
+                          }))
+                        }
                         disabled={!isEditing}
                       />
                     </div>
                     <div>
                       <Label htmlFor="timezone">Timezone</Label>
-                      <Select value={profile.timezone} onValueChange={(value) => setProfile(prev => ({ ...prev, timezone: value }))} disabled={!isEditing}>
+                      <Select
+                        value={profile.timezone}
+                        onValueChange={(value) =>
+                          setProfile((prev) => ({ ...prev, timezone: value }))
+                        }
+                        disabled={!isEditing}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="America/Los_Angeles">Pacific Time (PT)</SelectItem>
-                          <SelectItem value="America/Denver">Mountain Time (MT)</SelectItem>
-                          <SelectItem value="America/Chicago">Central Time (CT)</SelectItem>
-                          <SelectItem value="America/New_York">Eastern Time (ET)</SelectItem>
+                          <SelectItem value="America/Los_Angeles">
+                            Pacific Time (PT)
+                          </SelectItem>
+                          <SelectItem value="America/Denver">
+                            Mountain Time (MT)
+                          </SelectItem>
+                          <SelectItem value="America/Chicago">
+                            Central Time (CT)
+                          </SelectItem>
+                          <SelectItem value="America/New_York">
+                            Eastern Time (ET)
+                          </SelectItem>
                           <SelectItem value="Europe/London">GMT</SelectItem>
                         </SelectContent>
                       </Select>
@@ -457,7 +590,8 @@ export function AccountSettings() {
                 </CardHeader>
                 <CardContent className="text-center">
                   <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl font-bold">
-                    {profile.firstName.charAt(0)}{profile.lastName.charAt(0)}
+                    {profile.firstName.charAt(0)}
+                    {profile.lastName.charAt(0)}
                   </div>
                   <Button size="sm" variant="outline">
                     <Camera className="h-4 w-4 mr-2" />
@@ -477,7 +611,9 @@ export function AccountSettings() {
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Plan</span>
-                    <Badge className="bg-green-100 text-green-800">{user.tier}</Badge>
+                    <Badge className="bg-green-100 text-green-800">
+                      {user.tier}
+                    </Badge>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-sm">Status</span>
@@ -513,12 +649,14 @@ export function AccountSettings() {
                 {Object.entries(notifications.email).map(([key, value]) => (
                   <div key={key} className="flex items-center justify-between">
                     <Label htmlFor={`email-${key}`} className="capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                      {key.replace(/([A-Z])/g, " $1").trim()}
                     </Label>
                     <Switch
                       id={`email-${key}`}
                       checked={value}
-                      onCheckedChange={(checked) => handleNotificationChange('email', key, checked)}
+                      onCheckedChange={(checked) =>
+                        handleNotificationChange("email", key, checked)
+                      }
                     />
                   </div>
                 ))}
@@ -539,12 +677,14 @@ export function AccountSettings() {
                 {Object.entries(notifications.sms).map(([key, value]) => (
                   <div key={key} className="flex items-center justify-between">
                     <Label htmlFor={`sms-${key}`} className="capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                      {key.replace(/([A-Z])/g, " $1").trim()}
                     </Label>
                     <Switch
                       id={`sms-${key}`}
                       checked={value}
-                      onCheckedChange={(checked) => handleNotificationChange('sms', key, checked)}
+                      onCheckedChange={(checked) =>
+                        handleNotificationChange("sms", key, checked)
+                      }
                     />
                   </div>
                 ))}
@@ -565,12 +705,14 @@ export function AccountSettings() {
                 {Object.entries(notifications.browser).map(([key, value]) => (
                   <div key={key} className="flex items-center justify-between">
                     <Label htmlFor={`browser-${key}`} className="capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}
+                      {key.replace(/([A-Z])/g, " $1").trim()}
                     </Label>
                     <Switch
                       id={`browser-${key}`}
                       checked={value}
-                      onCheckedChange={(checked) => handleNotificationChange('browser', key, checked)}
+                      onCheckedChange={(checked) =>
+                        handleNotificationChange("browser", key, checked)
+                      }
                     />
                   </div>
                 ))}
@@ -585,7 +727,12 @@ export function AccountSettings() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Select value={notifications.frequency} onValueChange={(value) => handleNotificationChange('frequency', '', value)}>
+                <Select
+                  value={notifications.frequency}
+                  onValueChange={(value) =>
+                    handleNotificationChange("frequency", "", value)
+                  }
+                >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -597,7 +744,8 @@ export function AccountSettings() {
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-gray-500 mt-2">
-                  Urgent alerts will always be sent immediately regardless of this setting
+                  Urgent alerts will always be sent immediately regardless of
+                  this setting
                 </p>
               </CardContent>
             </Card>
@@ -630,7 +778,9 @@ export function AccountSettings() {
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span>Billing Cycle:</span>
-                        <span className="capitalize">{billing.billingCycle}</span>
+                        <span className="capitalize">
+                          {billing.billingCycle}
+                        </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Next Billing:</span>
@@ -639,8 +789,13 @@ export function AccountSettings() {
                       <div className="flex justify-between">
                         <span>Amount:</span>
                         <span className="font-semibold">
-                          ${billing.plan === 'enterprise' ? '999' : billing.plan === 'professional' ? '299' : '99'}
-                          /{billing.billingCycle === 'monthly' ? 'mo' : 'yr'}
+                          $
+                          {billing.plan === "enterprise"
+                            ? "999"
+                            : billing.plan === "professional"
+                              ? "299"
+                              : "99"}
+                          /{billing.billingCycle === "monthly" ? "mo" : "yr"}
                         </span>
                       </div>
                     </div>
@@ -652,36 +807,51 @@ export function AccountSettings() {
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span>Trades</span>
-                          <span>{billing.usage.trades.toLocaleString()} / {billing.usage.maxTrades.toLocaleString()}</span>
+                          <span>
+                            {billing.usage.trades.toLocaleString()} /{" "}
+                            {billing.usage.maxTrades.toLocaleString()}
+                          </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-blue-600 h-2 rounded-full"
-                            style={{ width: `${(billing.usage.trades / billing.usage.maxTrades) * 100}%` }}
+                            style={{
+                              width: `${(billing.usage.trades / billing.usage.maxTrades) * 100}%`,
+                            }}
                           ></div>
                         </div>
                       </div>
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span>API Calls</span>
-                          <span>{billing.usage.apiCalls.toLocaleString()} / {billing.usage.maxApiCalls.toLocaleString()}</span>
+                          <span>
+                            {billing.usage.apiCalls.toLocaleString()} /{" "}
+                            {billing.usage.maxApiCalls.toLocaleString()}
+                          </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-green-600 h-2 rounded-full"
-                            style={{ width: `${(billing.usage.apiCalls / billing.usage.maxApiCalls) * 100}%` }}
+                            style={{
+                              width: `${(billing.usage.apiCalls / billing.usage.maxApiCalls) * 100}%`,
+                            }}
                           ></div>
                         </div>
                       </div>
                       <div>
                         <div className="flex justify-between text-sm mb-1">
                           <span>Storage</span>
-                          <span>{billing.usage.dataStorage}GB / {billing.usage.maxStorage}GB</span>
+                          <span>
+                            {billing.usage.dataStorage}GB /{" "}
+                            {billing.usage.maxStorage}GB
+                          </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className="bg-purple-600 h-2 rounded-full"
-                            style={{ width: `${(billing.usage.dataStorage / billing.usage.maxStorage) * 100}%` }}
+                            style={{
+                              width: `${(billing.usage.dataStorage / billing.usage.maxStorage) * 100}%`,
+                            }}
                           ></div>
                         </div>
                       </div>
@@ -723,11 +893,17 @@ export function AccountSettings() {
                       <div className="flex items-center space-x-3">
                         <CreditCard className="h-5 w-5 text-gray-600" />
                         <div>
-                          <p className="font-medium">•••• •••• •••• {billing.paymentMethod.last4}</p>
-                          <p className="text-sm text-gray-500">Expires {billing.paymentMethod.expiryDate}</p>
+                          <p className="font-medium">
+                            •••• •••• •••• {billing.paymentMethod.last4}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Expires {billing.paymentMethod.expiryDate}
+                          </p>
                         </div>
                       </div>
-                      <Badge variant="outline" className="text-green-600">Primary</Badge>
+                      <Badge variant="outline" className="text-green-600">
+                        Primary
+                      </Badge>
                     </div>
                     <div className="flex space-x-2">
                       <Button size="sm" variant="outline" className="flex-1">
@@ -751,18 +927,27 @@ export function AccountSettings() {
                 <CardContent>
                   <div className="space-y-3">
                     {billing.invoices.map((invoice) => (
-                      <div key={invoice.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div
+                        key={invoice.id}
+                        className="flex items-center justify-between p-3 border rounded-lg"
+                      >
                         <div>
                           <p className="font-medium">{invoice.id}</p>
-                          <p className="text-sm text-gray-500">{invoice.date.toLocaleDateString()}</p>
+                          <p className="text-sm text-gray-500">
+                            {invoice.date.toLocaleDateString()}
+                          </p>
                         </div>
                         <div className="flex items-center space-x-3">
                           <span className="font-medium">${invoice.amount}</span>
-                          <Badge className={
-                            invoice.status === 'paid' ? 'bg-green-100 text-green-800' :
-                            invoice.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
-                          }>
+                          <Badge
+                            className={
+                              invoice.status === "paid"
+                                ? "bg-green-100 text-green-800"
+                                : invoice.status === "pending"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-red-100 text-red-800"
+                            }
+                          >
                             {invoice.status}
                           </Badge>
                           <Button size="sm" variant="outline">
@@ -800,23 +985,36 @@ export function AccountSettings() {
                     </div>
                     <h4 className="font-semibold">Password</h4>
                     <p className="text-sm text-gray-500">Strong password set</p>
-                    <Button size="sm" variant="outline" className="mt-2">Change</Button>
+                    <Button size="sm" variant="outline" className="mt-2">
+                      Change
+                    </Button>
                   </div>
                   <div className="text-center">
-                    <div className={`w-16 h-16 ${security.twoFactorEnabled ? 'bg-green-100' : 'bg-gray-100'} rounded-full flex items-center justify-center mx-auto mb-2`}>
-                      <Shield className={`h-8 w-8 ${security.twoFactorEnabled ? 'text-green-600' : 'text-gray-400'}`} />
+                    <div
+                      className={`w-16 h-16 ${security.twoFactorEnabled ? "bg-green-100" : "bg-gray-100"} rounded-full flex items-center justify-center mx-auto mb-2`}
+                    >
+                      <Shield
+                        className={`h-8 w-8 ${security.twoFactorEnabled ? "text-green-600" : "text-gray-400"}`}
+                      />
                     </div>
                     <h4 className="font-semibold">Two-Factor Auth</h4>
                     <p className="text-sm text-gray-500">
-                      {security.twoFactorEnabled ? 'Enabled' : 'Not enabled'}
+                      {security.twoFactorEnabled ? "Enabled" : "Not enabled"}
                     </p>
                     <Button
                       size="sm"
-                      variant={security.twoFactorEnabled ? "outline" : "default"}
+                      variant={
+                        security.twoFactorEnabled ? "outline" : "default"
+                      }
                       className="mt-2"
-                      onClick={() => setSecurity(prev => ({ ...prev, twoFactorEnabled: !prev.twoFactorEnabled }))}
+                      onClick={() =>
+                        setSecurity((prev) => ({
+                          ...prev,
+                          twoFactorEnabled: !prev.twoFactorEnabled,
+                        }))
+                      }
                     >
-                      {security.twoFactorEnabled ? 'Disable' : 'Enable'}
+                      {security.twoFactorEnabled ? "Disable" : "Enable"}
                     </Button>
                   </div>
                   <div className="text-center">
@@ -824,8 +1022,12 @@ export function AccountSettings() {
                       <Key className="h-8 w-8 text-blue-600" />
                     </div>
                     <h4 className="font-semibold">API Keys</h4>
-                    <p className="text-sm text-gray-500">{security.apiKeys.length} active keys</p>
-                    <Button size="sm" variant="outline" className="mt-2">Manage</Button>
+                    <p className="text-sm text-gray-500">
+                      {security.apiKeys.length} active keys
+                    </p>
+                    <Button size="sm" variant="outline" className="mt-2">
+                      Manage
+                    </Button>
                   </div>
                 </div>
               </CardContent>
@@ -867,7 +1069,9 @@ export function AccountSettings() {
                           <span className="font-mono bg-gray-100 px-2 py-1 rounded text-xs">
                             {apiKey.key.slice(0, 20)}...
                           </span>
-                          <Button size="sm" variant="outline">Copy</Button>
+                          <Button size="sm" variant="outline">
+                            Copy
+                          </Button>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-500">Created:</span>
@@ -881,7 +1085,11 @@ export function AccountSettings() {
                           <span className="text-gray-500">Permissions:</span>
                           <div className="flex flex-wrap gap-1 mt-1">
                             {apiKey.permissions.map((permission) => (
-                              <Badge key={permission} variant="outline" className="text-xs">
+                              <Badge
+                                key={permission}
+                                variant="outline"
+                                className="text-xs"
+                              >
                                 {permission}
                               </Badge>
                             ))}
@@ -905,12 +1113,19 @@ export function AccountSettings() {
               <CardContent>
                 <div className="space-y-3">
                   {security.loginHistory.map((login, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div className="flex items-center space-x-3">
-                        <div className={`w-3 h-3 rounded-full ${login.success ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                        <div
+                          className={`w-3 h-3 rounded-full ${login.success ? "bg-green-500" : "bg-red-500"}`}
+                        ></div>
                         <div>
                           <p className="font-medium">{login.location}</p>
-                          <p className="text-sm text-gray-500">{login.device}</p>
+                          <p className="text-sm text-gray-500">
+                            {login.device}
+                          </p>
                         </div>
                       </div>
                       <div className="text-right">
@@ -936,7 +1151,9 @@ export function AccountSettings() {
                   <div className="flex items-center justify-between p-4 border rounded-lg">
                     <div>
                       <h4 className="font-semibold">Export Account Data</h4>
-                      <p className="text-sm text-gray-500">Download all your account data and trading history</p>
+                      <p className="text-sm text-gray-500">
+                        Download all your account data and trading history
+                      </p>
                     </div>
                     <Button variant="outline">
                       <Download className="h-4 w-4 mr-2" />
@@ -946,10 +1163,17 @@ export function AccountSettings() {
 
                   <div className="flex items-center justify-between p-4 border border-red-200 rounded-lg bg-red-50">
                     <div>
-                      <h4 className="font-semibold text-red-600">Delete Account</h4>
-                      <p className="text-sm text-red-500">Permanently delete your account and all associated data</p>
+                      <h4 className="font-semibold text-red-600">
+                        Delete Account
+                      </h4>
+                      <p className="text-sm text-red-500">
+                        Permanently delete your account and all associated data
+                      </p>
                     </div>
-                    <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                    <Dialog
+                      open={showDeleteDialog}
+                      onOpenChange={setShowDeleteDialog}
+                    >
                       <DialogTrigger asChild>
                         <Button variant="destructive">
                           <Trash2 className="h-4 w-4 mr-2" />
@@ -960,15 +1184,20 @@ export function AccountSettings() {
                         <DialogHeader>
                           <DialogTitle>Are you absolutely sure?</DialogTitle>
                           <DialogDescription>
-                            This action cannot be undone. This will permanently delete your
-                            account and remove your data from our servers.
+                            This action cannot be undone. This will permanently
+                            delete your account and remove your data from our
+                            servers.
                           </DialogDescription>
                         </DialogHeader>
                         <div className="flex space-x-2">
                           <Button variant="destructive" className="flex-1">
                             Yes, delete my account
                           </Button>
-                          <Button variant="outline" onClick={() => setShowDeleteDialog(false)} className="flex-1">
+                          <Button
+                            variant="outline"
+                            onClick={() => setShowDeleteDialog(false)}
+                            className="flex-1"
+                          >
                             Cancel
                           </Button>
                         </div>
