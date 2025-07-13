@@ -412,7 +412,7 @@ Generated on: ${new Date().toLocaleDateString()}`;
                         onClick={() => {
                           // Simulate blockchain verification
                           alert(
-                            `🔍 Certificate Verification\n\nCertificate ID: ${cert.id}\nType: ${cert.type}\nAmount: ${cert.amount} MWh\nStatus: ${cert.verificationStatus}\n\nBlockchain Hash: 0x${Math.random().toString(16).substring(2, 10)}\nTimestamp: ${cert.date}\n\n✅ Certificate verified on blockchain\n🌍 Carbon credits: ${(cert.amount * 0.4).toFixed(1)}t CO₂`,
+                            `🔍 Certificate Verification\n\nCertificate ID: ${selectedCert.id}\nType: ${selectedCert.type}\nAmount: ${selectedCert.amount} MWh\nStatus: ${selectedCert.status}\n\nBlockchain Hash: 0x${Math.random().toString(16).substring(2, 10)}\nTimestamp: ${selectedCert.issueDate.toLocaleDateString()}\n\n✅ Certificate verified on blockchain\n🌍 Carbon credits: ${(selectedCert.amount * 0.4).toFixed(1)}t CO₂`,
                           );
                         }}
                       >
