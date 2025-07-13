@@ -326,6 +326,20 @@ export function EnergyMap() {
     return null;
   }
 
+  // Create custom div icon helper
+  const createCustomIcon = (emoji: string, color: string): DivIcon | null => {
+    if (typeof window === "undefined" || !leafletLoaded) return null;
+
+    // Dynamically import Leaflet to create icon
+    const L = require("leaflet");
+    return L.divIcon({
+      html: `<div style="background: ${color}; border: 2px solid #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 14px;">${emoji}</div>`,
+      className: "custom-div-icon",
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+    });
+  };
+
   return (
     <div className="space-y-6">
       {/* Grid Data Summary */}
