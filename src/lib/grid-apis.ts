@@ -383,7 +383,7 @@ class ERCOTApiService {
   private parseERCOTPrices(data: ERCOTApiResponse): RealTimePrice[] {
     if (!data?.data) return this.getFallbackPrices();
 
-    return data.data.slice(0, 20).map((item: any) => ({
+    return data.data.slice(0, 20).map((item) => ({
       timestamp: new Date(`${item.DeliveryDate} ${item.HourEnding}:00`),
       location: item.SettlementPoint || "HB_HOUSTON",
       price: Number.parseFloat(item.SettlementPointPrice) || 0,
