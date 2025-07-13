@@ -1,6 +1,35 @@
 // Real-time Grid API Integration Service
 // Connects to CAISO and ERCOT APIs for live energy market data
 
+interface CAISOApiResponse {
+  data?: Array<{
+    INTERVALSTARTTIME_GMT: string;
+    NODE: string;
+    MW: string;
+    NODE_TYPE?: string;
+    RENEWABLE_TYPE?: string;
+    CAPACITY?: string;
+    AVAILABILITY?: string;
+    CURTAILMENT_MW?: string;
+    RESOURCE_TYPE?: string;
+    CURTAILMENT_REASON?: string;
+    LOCATION?: string;
+  }>;
+}
+
+interface ERCOTApiResponse {
+  data?: Array<{
+    DeliveryDate: string;
+    HourEnding: string;
+    SettlementPoint?: string;
+    SettlementPointPrice?: string;
+    SystemWideAverageLoad?: string;
+    SystemWideActualLoad?: string;
+    ActualSystemWideWindOutput?: string;
+    WindCapacity?: string;
+  }>;
+}
+
 export interface RealTimePrice {
   timestamp: Date;
   location: string;
