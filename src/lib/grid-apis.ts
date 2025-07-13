@@ -392,7 +392,7 @@ class ERCOTApiService {
     }));
   }
 
-  private parseERCOTLoad(data: any): LoadForecast[] {
+  private parseERCOTLoad(data: ERCOTApiResponse): LoadForecast[] {
     if (!data?.data) return this.getFallbackLoad();
 
     return data.data.slice(0, 24).map((item: any) => ({
