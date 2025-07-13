@@ -386,7 +386,7 @@ Generated on: ${new Date().toLocaleDateString()}`;
                           const a = document.createElement("a");
                           a.style.display = "none";
                           a.href = url;
-                          a.download = `green-certificate-${cert.id}.txt`;
+                          a.download = `green-certificate-${selectedCert.id}.txt`;
                           document.body.appendChild(a);
                           a.click();
                           window.URL.revokeObjectURL(url);
@@ -396,7 +396,7 @@ Generated on: ${new Date().toLocaleDateString()}`;
                             Notification.permission === "granted"
                           ) {
                             new Notification("Certificate Downloaded! 📄", {
-                              body: `Green certificate ${cert.id} downloaded successfully`,
+                              body: `Green certificate ${selectedCert.id} downloaded successfully`,
                               icon: "🏆",
                             });
                           }
