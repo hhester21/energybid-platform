@@ -26,7 +26,7 @@ export function APIHealthMonitor() {
   const [isChecking, setIsChecking] = useState(false);
   const [lastCheck, setLastCheck] = useState<Date | null>(null);
 
-  const checkAPIHealth = async () => {
+  const checkAPIHealth = useCallback(async () => {
     setIsChecking(true);
     try {
       const healthData = await productionGridAPI.getAPIHealthStatus();
@@ -53,7 +53,7 @@ export function APIHealthMonitor() {
     } finally {
       setIsChecking(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     checkAPIHealth();
