@@ -380,7 +380,7 @@ class ERCOTApiService {
     }
   }
 
-  private parseERCOTPrices(data: any): RealTimePrice[] {
+  private parseERCOTPrices(data: ERCOTApiResponse): RealTimePrice[] {
     if (!data?.data) return this.getFallbackPrices();
 
     return data.data.slice(0, 20).map((item: any) => ({
