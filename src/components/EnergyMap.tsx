@@ -66,8 +66,9 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
   ssr: false,
 });
 
-// Import useMapEvents hook
+// Import useMapEvents hook and Leaflet types
 import { useMapEvents } from "react-leaflet";
+import type { DivIcon } from "leaflet";
 
 // Real-time energy data will be fetched from the service
 
@@ -118,6 +119,7 @@ export function EnergyMap() {
     lng: number;
   } | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
 
   // Auth context
   const { user } = useAuth();
@@ -196,6 +198,7 @@ export function EnergyMap() {
           shadowUrl:
             "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGVsbGlwc2UgY3g9IjIwIiBjeT0iMzgiIHJ4PSIxNSIgcnk9IjIiIGZpbGw9InJnYmEoMCwwLDAsMC4yKSIvPgo8L3N2Zz4K",
         });
+        setLeafletLoaded(true);
       });
     }
 
@@ -322,6 +325,20 @@ export function EnergyMap() {
     });
     return null;
   }
+
+  // Create custom div icon helper
+  const createCustomIcon = (emoji: string, color: string): DivIcon | null => {
+    if (typeof window === "undefined" || !leafletLoaded) return null;
+
+    // Dynamically import Leaflet to create icon
+    const L = require("leaflet");
+    return L.divIcon({
+      html: `<div style="background: ${color}; border: 2px solid #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 14px;">${emoji}</div>`,
+      className: "custom-div-icon",
+      iconSize: [30, 30],
+      iconAnchor: [15, 15],
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -475,28 +492,31 @@ export function EnergyMap() {
               />
 
               {/* Show new listing pin if in create mode and location selected */}
-              {newListingLocation && (
-                <Marker
-                  position={[newListingLocation.lat, newListingLocation.lng]}
-                  icon={L?.divIcon({
-                    html: `<div style="background: #10B981; border: 2px solid #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 16px;">📍</div>`,
-                    className: "custom-div-icon",
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15],
-                  })}
-                >
-                  <Popup>
-                    <div className="p-2">
-                      <h3 className="font-semibold text-green-600">
-                        New Energy Listing
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        Click to configure details
-                      </p>
-                    </div>
-                  </Popup>
-                </Marker>
-              )}
+              {newListingLocation &&
+                leafletLoaded &&
+                (() => {
+                  const customIcon = createCustomIcon("📍", "#10B981");
+                  return customIcon ? (
+                    <Marker
+                      position={[
+                        newListingLocation.lat,
+                        newListingLocation.lng,
+                      ]}
+                      icon={customIcon}
+                    >
+                      <Popup>
+                        <div className="p-2">
+                          <h3 className="font-semibold text-green-600">
+                            New Energy Listing
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Click to configure details
+                          </p>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  ) : null;
+                })()}
 
               {energyData.map((block) => {
                 // Get emoji and color based on energy type and facility
@@ -543,17 +563,15 @@ export function EnergyMap() {
 
                 const emoji = getMarkerEmoji(block);
                 const color = getMarkerColor(block);
+                const customIcon = createCustomIcon(emoji, color);
+
+                if (!customIcon) return null;
 
                 return (
                   <Marker
                     key={block.id}
                     position={[block.coordinates.lat, block.coordinates.lng]}
-                    icon={L?.divIcon({
-                      html: `<div style="background: ${color}; border: 2px solid #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 14px;">${emoji}</div>`,
-                      className: "custom-div-icon",
-                      iconSize: [30, 30],
-                      iconAnchor: [15, 15],
-                    })}
+                    icon={customIcon}
                     eventHandlers={{
                       click: () =>
                         !isCreatingListing && setSelectedBlock(block),
