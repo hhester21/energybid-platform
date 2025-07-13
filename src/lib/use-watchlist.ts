@@ -18,6 +18,40 @@ export interface WatchedBlock {
   };
 }
 
+// Define types for WebSocket event data
+interface BidUpdateData {
+  auctionId?: string;
+  location?: string;
+  price: number;
+}
+
+interface PriceAlertData {
+  energyBlockId?: string;
+  location?: string;
+  currentPrice: number;
+  alertType: string;
+}
+
+interface MarketData {
+  energyBlocks?: EnergyBlock[];
+}
+
+interface SavedWatchedBlock {
+  id: string;
+  energyBlock: EnergyBlock;
+  watchedAt: string;
+  priceAlerts: {
+    enabled: boolean;
+    threshold: number;
+    type: "above" | "below";
+  };
+  notifications: {
+    priceChanges: boolean;
+    statusChanges: boolean;
+    bidUpdates: boolean;
+  };
+}
+
 export function useWatchlist() {
   const [watchedBlocks, setWatchedBlocks] = useState<WatchedBlock[]>([]);
   const [loading, setLoading] = useState(false);
@@ -30,14 +64,14 @@ export function useWatchlist() {
       try {
         const parsed = JSON.parse(saved);
         // Convert date strings back to Date objects
-        const watchlist = parsed.map((item: any) => ({
+        const watchlist = parsed.map((item: SavedWatchedBlock) => ({
           ...item,
           watchedAt: new Date(item.watchedAt),
           energyBlock: {
             ...item.energyBlock,
             // Ensure coordinates are properly structured
-            coordinates: item.energyBlock.coordinates
-          }
+            coordinates: item.energyBlock.coordinates,
+          },
         }));
         setWatchedBlocks(watchlist);
       } catch (error) {
@@ -55,79 +89,93 @@ export function useWatchlist() {
   useEffect(() => {
     const cleanupFunctions = [
       addEventListener("bid_update", (event) => {
-        const bidData = event.data as any;
-        const watchedBlock = watchedBlocks.find(w =>
-          w.energyBlock.id === bidData.auctionId ||
-          w.energyBlock.location === bidData.location
+        const bidData = event.data as BidUpdateData;
+        const watchedBlock = watchedBlocks.find(
+          (w) =>
+            w.energyBlock.id === bidData.auctionId ||
+            w.energyBlock.location === bidData.location,
         );
 
-        if (watchedBlock && watchedBlock.notifications.bidUpdates) {
+        if (watchedBlock?.notifications.bidUpdates) {
           // Show notification for bid update on watched block
-          if (typeof window !== "undefined" && Notification.permission === "granted") {
-            new Notification(`Watched Energy Block Update! 👀`, {
+          if (
+            typeof window !== "undefined" &&
+            Notification.permission === "granted"
+          ) {
+            new Notification("Watched Energy Block Update! 👀", {
               body: `New bid on ${watchedBlock.energyBlock.location}: $${bidData.price.toFixed(3)}/kWh`,
-              icon: "⚡"
+              icon: "⚡",
             });
           }
         }
       }),
 
       addEventListener("price_alert", (event) => {
-        const alertData = event.data as any;
-        const watchedBlock = watchedBlocks.find(w =>
-          w.energyBlock.id === alertData.energyBlockId ||
-          w.energyBlock.location === alertData.location
+        const alertData = event.data as PriceAlertData;
+        const watchedBlock = watchedBlocks.find(
+          (w) =>
+            w.energyBlock.id === alertData.energyBlockId ||
+            w.energyBlock.location === alertData.location,
         );
 
-        if (watchedBlock && watchedBlock.notifications.priceChanges) {
+        if (watchedBlock?.notifications.priceChanges) {
           // Show notification for price change on watched block
-          if (typeof window !== "undefined" && Notification.permission === "granted") {
-            new Notification(`Watched Block Price Alert! 💰`, {
+          if (
+            typeof window !== "undefined" &&
+            Notification.permission === "granted"
+          ) {
+            new Notification("Watched Block Price Alert! 💰", {
               body: `${alertData.location}: $${alertData.currentPrice.toFixed(3)}/kWh (${alertData.alertType} threshold)`,
-              icon: "🚨"
+              icon: "🚨",
             });
           }
         }
       }),
 
       addEventListener("market_data", (event) => {
-        const marketData = event.data as any;
+        const marketData = event.data as MarketData;
         if (marketData.energyBlocks && Array.isArray(marketData.energyBlocks)) {
           // Update watched blocks with new market data
-          setWatchedBlocks(prev => prev.map(watched => {
-            const updatedBlock = marketData.energyBlocks.find((block: EnergyBlock) =>
-              block.id === watched.energyBlock.id
-            );
+          setWatchedBlocks((prev) =>
+            prev.map((watched) => {
+              const updatedBlock = marketData.energyBlocks.find(
+                (block: EnergyBlock) => block.id === watched.energyBlock.id,
+              );
 
-            if (updatedBlock) {
-              // Check price alerts
-              if (watched.priceAlerts.enabled) {
-                const currentPrice = updatedBlock.price;
-                const threshold = watched.priceAlerts.threshold;
-                const alertType = watched.priceAlerts.type;
+              if (updatedBlock) {
+                // Check price alerts
+                if (watched.priceAlerts.enabled) {
+                  const currentPrice = updatedBlock.price;
+                  const threshold = watched.priceAlerts.threshold;
+                  const alertType = watched.priceAlerts.type;
 
-                const shouldAlert = (alertType === "above" && currentPrice > threshold) ||
-                                 (alertType === "below" && currentPrice < threshold);
+                  const shouldAlert =
+                    (alertType === "above" && currentPrice > threshold) ||
+                    (alertType === "below" && currentPrice < threshold);
 
-                if (shouldAlert) {
-                  if (typeof window !== "undefined" && Notification.permission === "granted") {
-                    new Notification(`Watchlist Price Alert! 🎯`, {
-                      body: `${updatedBlock.location}: $${currentPrice.toFixed(3)}/kWh is ${alertType} your threshold of $${threshold.toFixed(3)}/kWh`,
-                      icon: "⚡"
-                    });
+                  if (shouldAlert) {
+                    if (
+                      typeof window !== "undefined" &&
+                      Notification.permission === "granted"
+                    ) {
+                      new Notification("Watchlist Price Alert! 🎯", {
+                        body: `${updatedBlock.location}: $${currentPrice.toFixed(3)}/kWh is ${alertType} your threshold of $${threshold.toFixed(3)}/kWh`,
+                        icon: "⚡",
+                      });
+                    }
                   }
                 }
-              }
 
-              return {
-                ...watched,
-                energyBlock: updatedBlock
-              };
-            }
-            return watched;
-          }));
+                return {
+                  ...watched,
+                  energyBlock: updatedBlock,
+                };
+              }
+              return watched;
+            }),
+          );
         }
-      })
+      }),
     ];
 
     return () => {
@@ -147,18 +195,18 @@ export function useWatchlist() {
       priceAlerts: {
         enabled: false,
         threshold: energyBlock.price,
-        type: "below"
+        type: "below",
       },
       notifications: {
         priceChanges: true,
         statusChanges: true,
-        bidUpdates: true
-      }
+        bidUpdates: true,
+      },
     };
 
-    setWatchedBlocks(prev => {
+    setWatchedBlocks((prev) => {
       // Check if already watching this block
-      const exists = prev.some(w => w.energyBlock.id === energyBlock.id);
+      const exists = prev.some((w) => w.energyBlock.id === energyBlock.id);
       if (exists) {
         return prev;
       }
@@ -166,10 +214,13 @@ export function useWatchlist() {
     });
 
     // Show confirmation notification
-    if (typeof window !== "undefined" && Notification.permission === "granted") {
+    if (
+      typeof window !== "undefined" &&
+      Notification.permission === "granted"
+    ) {
       new Notification("Added to Watchlist! 👀", {
         body: `Now watching ${energyBlock.location} for updates`,
-        icon: "⚡"
+        icon: "⚡",
       });
     }
 
@@ -177,29 +228,46 @@ export function useWatchlist() {
   }, []);
 
   const removeFromWatchlist = useCallback((blockId: string) => {
-    setWatchedBlocks(prev => prev.filter(w => w.energyBlock.id !== blockId));
+    setWatchedBlocks((prev) =>
+      prev.filter((w) => w.energyBlock.id !== blockId),
+    );
 
-    if (typeof window !== "undefined" && Notification.permission === "granted") {
+    if (
+      typeof window !== "undefined" &&
+      Notification.permission === "granted"
+    ) {
       new Notification("Removed from Watchlist", {
         body: "Energy block removed from your watchlist",
-        icon: "⚡"
+        icon: "⚡",
       });
     }
   }, []);
 
-  const updateWatchSettings = useCallback((watchId: string, updates: Partial<Omit<WatchedBlock, 'id' | 'energyBlock' | 'watchedAt'>>) => {
-    setWatchedBlocks(prev => prev.map(w =>
-      w.id === watchId ? { ...w, ...updates } : w
-    ));
-  }, []);
+  const updateWatchSettings = useCallback(
+    (
+      watchId: string,
+      updates: Partial<Omit<WatchedBlock, "id" | "energyBlock" | "watchedAt">>,
+    ) => {
+      setWatchedBlocks((prev) =>
+        prev.map((w) => (w.id === watchId ? { ...w, ...updates } : w)),
+      );
+    },
+    [],
+  );
 
-  const isWatching = useCallback((blockId: string) => {
-    return watchedBlocks.some(w => w.energyBlock.id === blockId);
-  }, [watchedBlocks]);
+  const isWatching = useCallback(
+    (blockId: string) => {
+      return watchedBlocks.some((w) => w.energyBlock.id === blockId);
+    },
+    [watchedBlocks],
+  );
 
-  const getWatchedBlock = useCallback((blockId: string) => {
-    return watchedBlocks.find(w => w.energyBlock.id === blockId);
-  }, [watchedBlocks]);
+  const getWatchedBlock = useCallback(
+    (blockId: string) => {
+      return watchedBlocks.find((w) => w.energyBlock.id === blockId);
+    },
+    [watchedBlocks],
+  );
 
   const clearWatchlist = useCallback(() => {
     setWatchedBlocks([]);
@@ -216,6 +284,6 @@ export function useWatchlist() {
     isWatching,
     getWatchedBlock,
     clearWatchlist,
-    watchlistCount: watchedBlocks.length
+    watchlistCount: watchedBlocks.length,
   };
 }
