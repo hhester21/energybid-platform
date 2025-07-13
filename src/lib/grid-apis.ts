@@ -204,7 +204,7 @@ class CAISOApiService {
     }));
   }
 
-  private parseCAISOCurtailment(data: any): CurtailmentData[] {
+  private parseCAISOCurtailment(data: CAISOApiResponse): CurtailmentData[] {
     if (!data?.data) return [];
 
     return data.data
