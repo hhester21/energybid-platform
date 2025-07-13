@@ -66,8 +66,9 @@ const Popup = dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
   ssr: false,
 });
 
-// Import useMapEvents hook
+// Import useMapEvents hook and Leaflet types
 import { useMapEvents } from "react-leaflet";
+import type { DivIcon } from "leaflet";
 
 // Real-time energy data will be fetched from the service
 
@@ -118,6 +119,7 @@ export function EnergyMap() {
     lng: number;
   } | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [leafletLoaded, setLeafletLoaded] = useState(false);
 
   // Auth context
   const { user } = useAuth();
@@ -196,6 +198,7 @@ export function EnergyMap() {
           shadowUrl:
             "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGVsbGlwc2UgY3g9IjIwIiBjeT0iMzgiIHJ4PSIxNSIgcnk9IjIiIGZpbGw9InJnYmEoMCwwLDAsMC4yKSIvPgo8L3N2Zz4K",
         });
+        setLeafletLoaded(true);
       });
     }
 
