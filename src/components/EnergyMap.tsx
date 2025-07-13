@@ -492,28 +492,31 @@ export function EnergyMap() {
               />
 
               {/* Show new listing pin if in create mode and location selected */}
-              {newListingLocation && (
-                <Marker
-                  position={[newListingLocation.lat, newListingLocation.lng]}
-                  icon={L?.divIcon({
-                    html: `<div style="background: #10B981; border: 2px solid #ffffff; border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2); font-size: 16px;">📍</div>`,
-                    className: "custom-div-icon",
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 15],
-                  })}
-                >
-                  <Popup>
-                    <div className="p-2">
-                      <h3 className="font-semibold text-green-600">
-                        New Energy Listing
-                      </h3>
-                      <p className="text-sm text-gray-600">
-                        Click to configure details
-                      </p>
-                    </div>
-                  </Popup>
-                </Marker>
-              )}
+              {newListingLocation &&
+                leafletLoaded &&
+                (() => {
+                  const customIcon = createCustomIcon("📍", "#10B981");
+                  return customIcon ? (
+                    <Marker
+                      position={[
+                        newListingLocation.lat,
+                        newListingLocation.lng,
+                      ]}
+                      icon={customIcon}
+                    >
+                      <Popup>
+                        <div className="p-2">
+                          <h3 className="font-semibold text-green-600">
+                            New Energy Listing
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Click to configure details
+                          </p>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  ) : null;
+                })()}
 
               {energyData.map((block) => {
                 // Get emoji and color based on energy type and facility
