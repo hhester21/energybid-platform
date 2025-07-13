@@ -194,7 +194,7 @@ class CAISOApiService {
   private parseCAISOGeneration(data: CAISOApiResponse): GenerationData[] {
     if (!data?.data) return this.getFallbackGeneration();
 
-    return data.data.map((item: any) => ({
+    return data.data.map((item) => ({
       timestamp: new Date(item.INTERVALSTARTTIME_GMT),
       resourceType: item.RENEWABLE_TYPE || "Unknown",
       output: Number.parseFloat(item.MW) || 0,
