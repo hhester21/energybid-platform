@@ -89,7 +89,7 @@ class CAISOApiService {
   private async makeRequest(
     endpoint: string,
     params: Record<string, string>,
-  ): Promise<any> {
+  ): Promise<CAISOApiResponse> {
     const now = Date.now();
     const lastRequest = this.rateLimiter.get(endpoint) || 0;
     const minInterval = 1000; // 1 second between requests
