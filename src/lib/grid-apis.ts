@@ -182,7 +182,7 @@ class CAISOApiService {
   private parseCAISOPrices(data: CAISOApiResponse): RealTimePrice[] {
     if (!data?.data) return this.getFallbackPrices();
 
-    return data.data.map((item: any) => ({
+    return data.data.map((item) => ({
       timestamp: new Date(item.INTERVALSTARTTIME_GMT),
       location: item.NODE,
       price: Number.parseFloat(item.MW) || 0,
